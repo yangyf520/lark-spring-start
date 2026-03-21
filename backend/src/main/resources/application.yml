@@ -1,0 +1,43 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: lark-manager-backend
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    com.lark.oapi.core.Transport: DEBUG
+
+lark:
+  oapi:
+    primary: default
+    apps:
+      default:
+        app-id: ${APP_ID:}
+        app-secret: ${APP_SECRET:}
+        base-url: FEISHU # or LARK_SUITE
+        marketplace-app: false
+        verification-token: ${VERIFICATION_TOKEN:}
+        encrypt-key: ${ENCRYPT_KEY:}
+        request-timeout-ms: 30000
+        log-req-at-debug: true
+        disable-token-cache: false
+      # another:
+      #   app-id: ${APP2_ID:}
+      #   app-secret: ${APP2_SECRET:}
+      #   base-url: LARK_SUITE

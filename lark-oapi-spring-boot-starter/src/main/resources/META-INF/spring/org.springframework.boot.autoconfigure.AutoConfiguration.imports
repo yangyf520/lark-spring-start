@@ -1,0 +1,4 @@
+com.larksuite.lark.oapi.spring.OapiAutoConfiguration
+com.larksuite.lark.starter.CommonAutoConfiguration
+com.larksuite.lark.starter.ImAutoConfiguration
+

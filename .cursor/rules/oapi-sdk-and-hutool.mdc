@@ -1,0 +1,24 @@
+---
+description: 使用 oapi-sdk 优先、缺工具用 Hutool、避免自造轮子
+alwaysApply: true
+---
+
+# Lark `oapi-sdk` 使用规则（Java）
+
+- **优先级**：先找 `oapi-sdk` / Spring / JDK / 现有依赖是否已提供能力；没有再用 **Hutool**；最后才写极小的自定义工具（必须有明确缺口）。
+- **Client 构建**：调用 Lark OpenAPI 统一用 `com.lark.oapi.Client`，全局单例（Spring Bean），不要在每次请求里 new。
+  - 自建应用：`Client.newBuilder(appId, appSecret).build()`
+  - 商店应用：`Client.newBuilder(appId, appSecret).marketplaceApp().build()`
+  - 需要指定域名：`.openBaseUrl(BaseUrlEnum.FeiShu|LarkSuite)`
+- **Token 处理**：默认优先让 SDK **自动获取并缓存** TenantAccessToken。
+  - 只有在你要“自己维护 token（比如已有 `TenantAccessTokenProvider`）”时才 `disableTokenCache()`，并在每次调用用 `RequestOptions.tenantAccessToken(...)` 显式传入。
+- **请求级别参数**：需要以用户身份调用时，用 `RequestOptions.userAccessToken(...)`；商店应用需要 `RequestOptions.tenantKey(...)`；自定义 header 也放在 `RequestOptions.headers(...)`。
+- **错误处理**：所有 SDK Resp 都先 `resp.success()`；失败统一记录 `code/msg/requestId` 并向上抛/返回（不要吞异常、不要只打印 body）。
+- **事件/回调**：能用 SDK 的 `EventDispatcher`/（如需接入 Spring Webhook）`oapi-sdk-servlet-ext` 就用它，避免自己实现验签/解密/重试协议。
+- **组合调用**：多 API 串行/编排优先参考官方 demo 的 composite/quick-start 思路，避免散落在 Controller 里。
+
+# Hutool 使用规则
+
+- **仅在依赖库缺能力时引入**：字符串/集合/日期/HTTP/IO/加解密/ID 等，优先用 Hutool（例如 `StrUtil`/`CollUtil`/`DateUtil`/`HttpUtil`/`IdUtil`/`JSONUtil`）。
+- **禁止自造通用工具类**：不要新增 `*Utils`/`CommonUtil` 之类“全家桶”文件；需要时用 Hutool 或在最贴近业务的包内写小函数。
+

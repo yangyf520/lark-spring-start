@@ -1,0 +1,64 @@
+# Maven
+**/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Local Maven cache (if ever vendored under repo)
+**/.m2/
+
+# Env & secrets (keep *.env.example tracked)
+.env
+**/.env
+**/.env.*
+!**/.env.example
+
+# Runtime (start.sh / local runs)
+.run/
+
+# Logs
+*.log
+logs/
+
+# JVM
+hs_err_pid*
+replay_pid*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE — JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# IDE — Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# IDE — VS Code (uncomment if you don't share workspace settings)
+# .vscode/
+
+# Node (if you add a frontend later)
+node_modules/
+dist/
+.npm
+.eslintcache
+
+# Spring Boot repackage backup
+*.jar.original
+
+# Cursor IDE：忽略 .cursor 下本地杂项，但保留并提交 rules（团队共享）
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
