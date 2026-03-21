@@ -1,8 +1,10 @@
 package com.larksuite.lark.web;
 
-import com.larksuite.lark.api.dto.ApiResponse;
-import com.larksuite.lark.service.LarkCalendarService;
 import com.lark.oapi.service.calendar.v4.model.CalendarEvent;
+import com.lark.oapi.service.calendar.v4.model.CreateCalendarEventResp;
+import com.lark.oapi.service.calendar.v4.model.GetCalendarEventResp;
+import com.larksuite.lark.core.advice.LarkApi;
+import com.larksuite.lark.service.LarkCalendarService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** 日历：事件查询与创建。 */
+@LarkApi
 @RestController
 @ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
 @RequestMapping(path = "/api/lark/calendar", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,38 +36,22 @@ public class CalendarController {
             @Valid CalendarEvent body
     ) {}
 
-    /** 查询日历事件。 */
+    /** 获取日历事件：根据 calendarId 和 eventId 查询事件详情。 */
     @GetMapping("/events/{calendarId}/{eventId}")
-    public ApiResponse getEvent(
+    public GetCalendarEventResp getEvent(
             @PathVariable String calendarId,
             @PathVariable String eventId,
             @RequestParam(required = false) String appKey
-    ) {
-        try {
-            var resp = calendarService.getEvent(appKey, calendarId, eventId);
-            if (!resp.success()) {
-                return ApiResponse.failure(String.valueOf(resp.getCode()), resp.getMsg());
-            }
-            return ApiResponse.success(resp.getData());
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getClass().getSimpleName(), e.getMessage());
-        }
+    ) throws Exception {
+        return calendarService.getEvent(appKey, calendarId, eventId);
     }
 
-    /** 在指定日历下创建事件。 */
+    /** 创建日历事件：在指定日历下创建一个新事件。 */
     @PostMapping(path = "/events", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse createEvent(@Valid @RequestBody CreateEventReq req) {
+    public CreateCalendarEventResp createEvent(@Valid @RequestBody CreateEventReq req) throws Exception {
         if (req.body() == null) {
-            return ApiResponse.failure("INVALID_ARGUMENT", "body is required");
+            throw new IllegalArgumentException("body is required");
         }
-        try {
-            var resp = calendarService.createEvent(req.appKey(), req.calendarId(), req.body());
-            if (!resp.success()) {
-                return ApiResponse.failure(String.valueOf(resp.getCode()), resp.getMsg());
-            }
-            return ApiResponse.success(resp.getData());
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getClass().getSimpleName(), e.getMessage());
-        }
+        return calendarService.createEvent(req.appKey(), req.calendarId(), req.body());
     }
 }

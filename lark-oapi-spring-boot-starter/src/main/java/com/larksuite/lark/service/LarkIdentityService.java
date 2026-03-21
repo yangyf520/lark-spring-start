@@ -6,7 +6,7 @@ import com.lark.oapi.service.authen.v1.model.GetUserInfoResp;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import com.larksuite.lark.support.LarkApiExecutor;
 
-/** 用户身份：需 user_access_token。 */
+/** 用户身份：需 user_access_token；返回完整 SDK Resp。 */
 public class LarkIdentityService {
 
     private final OapiClientRegistry registry;
@@ -17,7 +17,6 @@ public class LarkIdentityService {
         this.executor = executor;
     }
 
-    /** 获取登录用户基本信息。 */
     public GetUserInfoResp getUserInfo(String appKey, String userAccessToken) throws Exception {
         Client client = resolveClient(appKey);
         RequestOptions options = RequestOptions.newBuilder()

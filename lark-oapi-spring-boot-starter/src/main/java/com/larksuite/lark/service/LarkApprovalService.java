@@ -3,15 +3,15 @@ package com.larksuite.lark.service;
 import com.lark.oapi.Client;
 import com.lark.oapi.service.approval.v4.model.CreateInstanceReq;
 import com.lark.oapi.service.approval.v4.model.CreateInstanceResp;
-import com.lark.oapi.service.approval.v4.model.InstanceCreate;
 import com.lark.oapi.service.approval.v4.model.GetApprovalReq;
 import com.lark.oapi.service.approval.v4.model.GetApprovalResp;
 import com.lark.oapi.service.approval.v4.model.GetInstanceReq;
 import com.lark.oapi.service.approval.v4.model.GetInstanceResp;
+import com.lark.oapi.service.approval.v4.model.InstanceCreate;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import com.larksuite.lark.support.LarkApiExecutor;
 
-/** 审批 v4：定义、实例、创建。 */
+/** 审批 v4：定义、实例、创建；返回完整 SDK Resp。 */
 public class LarkApprovalService {
 
     private final OapiClientRegistry registry;
@@ -22,7 +22,6 @@ public class LarkApprovalService {
         this.executor = executor;
     }
 
-    /** 获取审批定义。 */
     public GetApprovalResp getApproval(String appKey, String approvalCode) throws Exception {
         Client client = resolveClient(appKey);
         GetApprovalReq req = GetApprovalReq.newBuilder()
@@ -31,7 +30,6 @@ public class LarkApprovalService {
         return executor.execute(() -> client.approval().v4().approval().get(req));
     }
 
-    /** 获取审批实例。 */
     public GetInstanceResp getInstance(String appKey, String instanceId, String userId, String userIdType) throws Exception {
         Client client = resolveClient(appKey);
         GetInstanceReq req = GetInstanceReq.newBuilder()
@@ -42,7 +40,6 @@ public class LarkApprovalService {
         return executor.execute(() -> client.approval().v4().instance().get(req));
     }
 
-    /** 创建审批实例。 */
     public CreateInstanceResp createInstance(String appKey, InstanceCreate body) throws Exception {
         Client client = resolveClient(appKey);
         CreateInstanceReq req = CreateInstanceReq.newBuilder()

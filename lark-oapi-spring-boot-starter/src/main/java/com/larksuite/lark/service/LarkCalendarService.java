@@ -1,15 +1,15 @@
 package com.larksuite.lark.service;
 
 import com.lark.oapi.Client;
+import com.lark.oapi.service.calendar.v4.model.CalendarEvent;
 import com.lark.oapi.service.calendar.v4.model.CreateCalendarEventReq;
 import com.lark.oapi.service.calendar.v4.model.CreateCalendarEventResp;
-import com.lark.oapi.service.calendar.v4.model.CalendarEvent;
 import com.lark.oapi.service.calendar.v4.model.GetCalendarEventReq;
 import com.lark.oapi.service.calendar.v4.model.GetCalendarEventResp;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import com.larksuite.lark.support.LarkApiExecutor;
 
-/** 日历 v4：事件查询与创建。 */
+/** 日历 v4：事件查询与创建；返回完整 SDK Resp。 */
 public class LarkCalendarService {
 
     private final OapiClientRegistry registry;
@@ -20,7 +20,6 @@ public class LarkCalendarService {
         this.executor = executor;
     }
 
-    /** 查询日历事件。 */
     public GetCalendarEventResp getEvent(String appKey, String calendarId, String eventId) throws Exception {
         Client client = resolveClient(appKey);
         GetCalendarEventReq req = GetCalendarEventReq.newBuilder()
@@ -30,7 +29,6 @@ public class LarkCalendarService {
         return executor.execute(() -> client.calendar().v4().calendarEvent().get(req));
     }
 
-    /** 在指定日历下创建事件。 */
     public CreateCalendarEventResp createEvent(String appKey, String calendarId, CalendarEvent body) throws Exception {
         Client client = resolveClient(appKey);
         CreateCalendarEventReq req = CreateCalendarEventReq.newBuilder()

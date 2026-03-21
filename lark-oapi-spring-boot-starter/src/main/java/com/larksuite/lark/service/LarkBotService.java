@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lark.oapi.Client;
 import com.lark.oapi.core.response.RawResponse;
 import com.lark.oapi.core.token.AccessTokenType;
+import com.larksuite.lark.api.exception.LarkSdkException;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import com.larksuite.lark.support.LarkApiExecutor;
 import org.slf4j.Logger;
@@ -48,6 +49,26 @@ public class LarkBotService {
                     + bodyText + ", requestId=" + raw.getRequestID());
         }
         return objectMapper.readTree(body);
+    }
+
+    /**
+     * 解析 {@link #getBotInfo(String)} 的 JSON，成功时返回机器人 data（与 HTTP API 一致）；
+     * 业务错误码时抛 {@link LarkSdkException}。
+     */
+    public Object getBotPayload(String appKey) throws Exception {
+        JsonNode root = getBotInfo(appKey);
+        int code = root.path("code").asInt(0);
+        if (code != 0) {
+            throw new LarkSdkException(String.valueOf(code), root.path("msg").asText(""));
+        }
+        JsonNode data = root.get("bot");
+        if (data == null || data.isNull()) {
+            data = root.get("data");
+        }
+        if (data == null || data.isNull()) {
+            return null;
+        }
+        return objectMapper.convertValue(data, Object.class);
     }
 
     private Client resolveClient(String appKey) {

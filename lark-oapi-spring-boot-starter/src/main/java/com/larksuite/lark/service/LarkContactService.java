@@ -10,7 +10,12 @@ import com.lark.oapi.service.contact.v3.model.ListDepartmentReq;
 import com.lark.oapi.service.contact.v3.model.ListDepartmentResp;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 
-/** 通讯录 contact v3：用户、部门、批量换 ID。 */
+/**
+ * 通讯录 contact v3：用户、部门、批量换 ID。
+ * <p>
+ * 返回完整 SDK Resp；经 {@link com.larksuite.lark.core.advice.LarkApiResponseBodyAdvice} 写出 HTTP 时再解包为 {@link com.larksuite.lark.api.dto.ApiResponse}。
+ * 若其它模块直接注入调用，请自行根据 {@code success()} / {@code getData()} 处理。
+ */
 public class LarkContactService {
 
     private final OapiClientRegistry clientRegistry;
@@ -19,7 +24,6 @@ public class LarkContactService {
         this.clientRegistry = clientRegistry;
     }
 
-    /** 查询单个用户。 */
     public GetUserResp getUser(String appKey, String userId, String userIdType, String departmentIdType) throws Exception {
         Client client = resolveClient(appKey);
         GetUserReq req = GetUserReq.newBuilder()
@@ -30,7 +34,6 @@ public class LarkContactService {
         return client.contact().v3().user().get(req);
     }
 
-    /** 分页列出部门。 */
     public ListDepartmentResp listDepartments(
             String appKey,
             String parentDepartmentId,
@@ -52,7 +55,6 @@ public class LarkContactService {
         return client.contact().v3().department().list(req);
     }
 
-    /** 通过邮箱或手机号批量查询用户 ID。 */
     public BatchGetIdUserResp batchGetId(String appKey, String userIdType, String[] emails, String[] mobiles, Boolean includeResigned) throws Exception {
         Client client = resolveClient(appKey);
         BatchGetIdUserReq req = BatchGetIdUserReq.newBuilder()

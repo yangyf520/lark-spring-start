@@ -2,7 +2,6 @@ package com.larksuite.lark.im;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lark.oapi.Client;
-import com.lark.oapi.core.utils.Jsons;
 import com.lark.oapi.service.im.v1.enums.MsgTypeEnum;
 import com.lark.oapi.service.im.v1.enums.ReceiveIdTypeEnum;
 import com.lark.oapi.service.im.v1.model.CreateMessageReq;
@@ -16,7 +15,7 @@ import com.larksuite.lark.service.LarkImApi;
 
 import java.util.Objects;
 
-/** 以应用身份调用 IM v1：发文本、卡片、更新消息。 */
+/** 以应用身份调用 IM v1：发文本、卡片、更新消息；返回完整 SDK Resp。 */
 public class ImMessageService implements LarkImApi {
 
     private final OapiClientRegistry registry;
@@ -27,7 +26,6 @@ public class ImMessageService implements LarkImApi {
         this.objectMapper = objectMapper;
     }
 
-    /** 发送文本消息。 */
     @Override
     public CreateMessageResp sendText(String appKey, ReceiveIdTypeEnum receiveIdType, String receiveId, String text) throws Exception {
         Objects.requireNonNull(receiveIdType, "receiveIdType");
@@ -53,17 +51,9 @@ public class ImMessageService implements LarkImApi {
                         .build())
                 .build();
 
-        CreateMessageResp resp = client.im().message().create(req);
-        if (resp.getCode() != 0) {
-            throw new IllegalStateException(String.format(
-                    "sendText failed, code=%d, msg=%s, requestId=%s, err=%s",
-                    resp.getCode(), resp.getMsg(), resp.getRequestId(), Jsons.DEFAULT.toJson(resp.getError())
-            ));
-        }
-        return resp;
+        return client.im().message().create(req);
     }
 
-    /** 发送 interactive 卡片消息。 */
     public CreateMessageResp sendCard(String appKey, ReceiveIdTypeEnum receiveIdType, String receiveId, String cardJson) throws Exception {
         Objects.requireNonNull(receiveIdType, "receiveIdType");
         if (receiveId == null || receiveId.isBlank()) {
@@ -82,17 +72,9 @@ public class ImMessageService implements LarkImApi {
                         .content(cardJson)
                         .build())
                 .build();
-        CreateMessageResp resp = client.im().message().create(req);
-        if (resp.getCode() != 0) {
-            throw new IllegalStateException(String.format(
-                    "sendCard failed, code=%d, msg=%s, requestId=%s, err=%s",
-                    resp.getCode(), resp.getMsg(), resp.getRequestId(), Jsons.DEFAULT.toJson(resp.getError())
-            ));
-        }
-        return resp;
+        return client.im().message().create(req);
     }
 
-    /** 更新已发送消息（content 为 JSON 字符串）。 */
     public UpdateMessageResp updateMessage(String appKey, String messageId, String contentJson) throws Exception {
         if (messageId == null || messageId.isBlank()) {
             throw new IllegalArgumentException("messageId is blank");
@@ -107,14 +89,6 @@ public class ImMessageService implements LarkImApi {
                         .content(contentJson)
                         .build())
                 .build();
-        UpdateMessageResp resp = client.im().message().update(req);
-        if (resp.getCode() != 0) {
-            throw new IllegalStateException(String.format(
-                    "updateMessage failed, code=%d, msg=%s, requestId=%s, err=%s",
-                    resp.getCode(), resp.getMsg(), resp.getRequestId(), Jsons.DEFAULT.toJson(resp.getError())
-            ));
-        }
-        return resp;
+        return client.im().message().update(req);
     }
 }
-

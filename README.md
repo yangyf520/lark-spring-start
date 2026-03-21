@@ -58,8 +58,11 @@ mvn spring-boot:run
 
 ### 3. 文档与调试
 
-- **Swagger UI**：浏览器打开 [http://127.0.0.1:8080/](http://127.0.0.1:8080/) 会重定向到 Swagger 页面。
-- **接口列表与 curl 示例**：见 [`scripts/README-api.md`](scripts/README-api.md)。
+- **Swagger UI（推荐入口）**：[http://127.0.0.1:8080/swagger-ui/index.html](http://127.0.0.1:8080/swagger-ui/index.html)
+- **根路径重定向入口**：[http://127.0.0.1:8080/](http://127.0.0.1:8080/)（会跳转到 Swagger UI）
+- **OpenAPI JSON（默认分组）**：[http://127.0.0.1:8080/v3/api-docs](http://127.0.0.1:8080/v3/api-docs)
+- **OpenAPI JSON（lark 分组）**：[http://127.0.0.1:8080/v3/api-docs/lark](http://127.0.0.1:8080/v3/api-docs/lark)
+- **全部接口 curl 与说明**：`chmod +x scripts/send-lark-test.sh && ./scripts/send-lark-test.sh`
 - **一键冒烟**：`chmod +x scripts/api-lark-smoke.sh && ./scripts/api-lark-smoke.sh`
 
 ## 配置说明要点

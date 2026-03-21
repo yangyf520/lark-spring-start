@@ -1,8 +1,11 @@
 package com.larksuite.lark.web;
 
-import com.larksuite.lark.api.dto.ApiResponse;
-import com.larksuite.lark.service.LarkApprovalService;
+import com.lark.oapi.service.approval.v4.model.CreateInstanceResp;
+import com.lark.oapi.service.approval.v4.model.GetApprovalResp;
+import com.lark.oapi.service.approval.v4.model.GetInstanceResp;
 import com.lark.oapi.service.approval.v4.model.InstanceCreate;
+import com.larksuite.lark.core.advice.LarkApi;
+import com.larksuite.lark.service.LarkApprovalService;
 import jakarta.validation.Valid;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** 审批：定义、实例查询与创建。 */
+@LarkApi
 @RestController
 @ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
 @RequestMapping(path = "/api/lark/approval", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -26,58 +30,37 @@ public class ApprovalController {
         this.approvalService = approvalService;
     }
 
-    public record CreateInstanceReq(String appKey, @Valid InstanceCreate body) {}
+    public record CreateInstanceReq(
+            String appKey,
+            @Valid InstanceCreate body
+    ) {}
 
-    /** 获取审批定义。 */
+    /** 获取审批定义：根据 approvalCode 获取审批定义详情。 */
     @GetMapping("/approvals/{approvalCode}")
-    public ApiResponse getApproval(
+    public GetApprovalResp getApproval(
             @PathVariable String approvalCode,
             @RequestParam(required = false) String appKey
-    ) {
-        try {
-            var resp = approvalService.getApproval(appKey, approvalCode);
-            if (!resp.success()) {
-                return ApiResponse.failure(String.valueOf(resp.getCode()), resp.getMsg());
-            }
-            return ApiResponse.success(resp.getData());
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getClass().getSimpleName(), e.getMessage());
-        }
+    ) throws Exception {
+        return approvalService.getApproval(appKey, approvalCode);
     }
 
-    /** 获取审批实例详情。 */
+    /** 获取审批实例详情：根据 instanceId 查询审批实例。 */
     @GetMapping("/instances/{instanceId}")
-    public ApiResponse getInstance(
+    public GetInstanceResp getInstance(
             @PathVariable String instanceId,
             @RequestParam(required = false) String appKey,
             @RequestParam(required = false) String userId,
             @RequestParam(required = false, defaultValue = "user_id") String userIdType
-    ) {
-        try {
-            var resp = approvalService.getInstance(appKey, instanceId, userId, userIdType);
-            if (!resp.success()) {
-                return ApiResponse.failure(String.valueOf(resp.getCode()), resp.getMsg());
-            }
-            return ApiResponse.success(resp.getData());
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getClass().getSimpleName(), e.getMessage());
-        }
+    ) throws Exception {
+        return approvalService.getInstance(appKey, instanceId, userId, userIdType);
     }
 
-    /** 创建审批实例。 */
+    /** 创建审批实例：提交审批实例创建请求。 */
     @PostMapping(path = "/instances", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse createInstance(@Valid @RequestBody CreateInstanceReq req) {
+    public CreateInstanceResp createInstance(@Valid @RequestBody CreateInstanceReq req) throws Exception {
         if (req.body() == null) {
-            return ApiResponse.failure("INVALID_ARGUMENT", "body is required");
+            throw new IllegalArgumentException("body is required");
         }
-        try {
-            var resp = approvalService.createInstance(req.appKey(), req.body());
-            if (!resp.success()) {
-                return ApiResponse.failure(String.valueOf(resp.getCode()), resp.getMsg());
-            }
-            return ApiResponse.success(resp.getData());
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getClass().getSimpleName(), e.getMessage());
-        }
+        return approvalService.createInstance(req.appKey(), req.body());
     }
 }

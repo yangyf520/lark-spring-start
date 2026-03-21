@@ -20,7 +20,7 @@ public class AdminController {
         this.tokenProvider = tokenProvider;
     }
 
-    /** 返回 ok、时间与 tenant access token 是否可用（不含明文）。 */
+    /** 健康检查：返回服务可用性与 tenant access token 缓存状态（不含明文）。 */
     @GetMapping("/health")
     public Map<String, Object> health() {
         try {

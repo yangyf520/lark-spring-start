@@ -1,6 +1,9 @@
 package com.larksuite.lark.web;
 
-import com.larksuite.lark.api.dto.ApiResponse;
+import com.lark.oapi.service.contact.v3.model.BatchGetIdUserResp;
+import com.lark.oapi.service.contact.v3.model.GetUserResp;
+import com.lark.oapi.service.contact.v3.model.ListDepartmentResp;
+import com.larksuite.lark.core.advice.LarkApi;
 import com.larksuite.lark.service.LarkContactService;
 import jakarta.validation.Valid;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** 通讯录：用户 / 部门 / 批量换 ID。 */
+@LarkApi
 @RestController
 @ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
 @RequestMapping(path = "/api/lark/contact", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,28 +37,20 @@ public class ContactController {
             Boolean includeResigned
     ) {}
 
-    /** 按 userId 查询用户详情（userIdType 默认 open_id）。 */
+    /** 查询用户详情：按 userId 查询用户信息。 */
     @GetMapping("/users/{userId}")
-    public ApiResponse getUser(
+    public GetUserResp getUser(
             @PathVariable String userId,
             @RequestParam(required = false) String appKey,
             @RequestParam(required = false, defaultValue = "open_id") String userIdType,
             @RequestParam(required = false, defaultValue = "open_department_id") String departmentIdType
-    ) {
-        try {
-            var resp = contactService.getUser(appKey, userId, userIdType, departmentIdType);
-            if (!resp.success()) {
-                return ApiResponse.failure(String.valueOf(resp.getCode()), resp.getMsg());
-            }
-            return ApiResponse.success(resp.getData());
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getClass().getSimpleName(), e.getMessage());
-        }
+    ) throws Exception {
+        return contactService.getUser(appKey, userId, userIdType, departmentIdType);
     }
 
-    /** 分页列出子部门。 */
+    /** 分页查询部门列表：按父部门分页列出子部门。 */
     @GetMapping("/departments")
-    public ApiResponse listDepartments(
+    public ListDepartmentResp listDepartments(
             @RequestParam(required = false) String appKey,
             @RequestParam(required = false, defaultValue = "0") String parentDepartmentId,
             @RequestParam(required = false, defaultValue = "false") Boolean fetchChild,
@@ -62,37 +58,21 @@ public class ContactController {
             @RequestParam(required = false) String pageToken,
             @RequestParam(required = false, defaultValue = "open_id") String userIdType,
             @RequestParam(required = false, defaultValue = "open_department_id") String departmentIdType
-    ) {
-        try {
-            var resp = contactService.listDepartments(
-                    appKey,
-                    parentDepartmentId,
-                    fetchChild,
-                    pageSize,
-                    pageToken,
-                    userIdType,
-                    departmentIdType
-            );
-            if (!resp.success()) {
-                return ApiResponse.failure(String.valueOf(resp.getCode()), resp.getMsg());
-            }
-            return ApiResponse.success(resp.getData());
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getClass().getSimpleName(), e.getMessage());
-        }
+    ) throws Exception {
+        return contactService.listDepartments(
+                appKey,
+                parentDepartmentId,
+                fetchChild,
+                pageSize,
+                pageToken,
+                userIdType,
+                departmentIdType
+        );
     }
 
-    /** 通过邮箱或手机号批量查询 user_id 等。 */
+    /** 批量查询用户 ID：通过邮箱或手机号批量查询用户 ID 信息。 */
     @PostMapping(path = "/users/batch-get-id", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse batchGetId(@Valid @RequestBody BatchGetIdReq req) {
-        try {
-            var resp = contactService.batchGetId(req.appKey(), req.userIdType(), req.emails(), req.mobiles(), req.includeResigned());
-            if (!resp.success()) {
-                return ApiResponse.failure(String.valueOf(resp.getCode()), resp.getMsg());
-            }
-            return ApiResponse.success(resp.getData());
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getClass().getSimpleName(), e.getMessage());
-        }
+    public BatchGetIdUserResp batchGetId(@Valid @RequestBody BatchGetIdReq req) throws Exception {
+        return contactService.batchGetId(req.appKey(), req.userIdType(), req.emails(), req.mobiles(), req.includeResigned());
     }
 }

@@ -1,6 +1,9 @@
 package com.larksuite.lark.web;
 
-import com.larksuite.lark.api.dto.ApiResponse;
+import com.lark.oapi.service.auth.v3.model.InternalTenantAccessTokenResp;
+import com.lark.oapi.service.authen.v1.model.CreateAccessTokenResp;
+import com.lark.oapi.service.authen.v1.model.CreateRefreshAccessTokenResp;
+import com.larksuite.lark.core.advice.LarkApi;
 import com.larksuite.lark.service.LarkAuthService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** 飞书鉴权：租户 token、用户 OAuth code 换票与刷新。 */
+/** 飞书鉴权：租户 token、用户 OAuth code 换票与刷新（成功/失败由全局 Advice 与 Service 统一处理）。 */
+@LarkApi
 @RestController
 @ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
 @RequestMapping(path = "/api/lark/auth", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,46 +41,22 @@ public class AuthController {
             String grantType
     ) {}
 
-    /** 使用 app_id/app_secret 换取 tenant_access_token（服务端）。 */
+    /** 获取租户访问令牌：使用应用凭证换取 tenant_access_token（服务端调用）。 */
     @PostMapping(path = "/tenant-access-token/internal", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse tenantAccessToken(@RequestBody(required = false) TenantTokenReq req) {
-        try {
-            String appKey = req == null ? null : req.appKey();
-            var resp = authService.tenantAccessTokenInternal(appKey);
-            if (!resp.success()) {
-                return ApiResponse.failure(String.valueOf(resp.getCode()), resp.getMsg());
-            }
-            return ApiResponse.success(resp.getData());
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getClass().getSimpleName(), e.getMessage());
-        }
+    public InternalTenantAccessTokenResp tenantAccessToken(@RequestBody(required = false) TenantTokenReq req) throws Exception {
+        String appKey = req == null ? null : req.appKey();
+        return authService.tenantAccessTokenInternal(appKey);
     }
 
-    /** OAuth code 换取 user_access_token。 */
+    /** OAuth code 换取用户令牌：使用授权码 code 换取 user_access_token。 */
     @PostMapping(path = "/access-token", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse accessToken(@Valid @RequestBody AccessTokenReq req) {
-        try {
-            var resp = authService.exchangeUserAccessToken(req.appKey(), req.code(), req.grantType());
-            if (!resp.success()) {
-                return ApiResponse.failure(String.valueOf(resp.getCode()), resp.getMsg());
-            }
-            return ApiResponse.success(resp.getData());
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getClass().getSimpleName(), e.getMessage());
-        }
+    public CreateAccessTokenResp accessToken(@Valid @RequestBody AccessTokenReq req) throws Exception {
+        return authService.exchangeUserAccessToken(req.appKey(), req.code(), req.grantType());
     }
 
-    /** 使用 refresh_token 刷新用户 access_token。 */
+    /** 刷新用户访问令牌：使用 refresh_token 刷新用户 access_token。 */
     @PostMapping(path = "/refresh-access-token", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse refreshAccessToken(@Valid @RequestBody RefreshTokenReq req) {
-        try {
-            var resp = authService.refreshUserAccessToken(req.appKey(), req.refreshToken(), req.grantType());
-            if (!resp.success()) {
-                return ApiResponse.failure(String.valueOf(resp.getCode()), resp.getMsg());
-            }
-            return ApiResponse.success(resp.getData());
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getClass().getSimpleName(), e.getMessage());
-        }
+    public CreateRefreshAccessTokenResp refreshAccessToken(@Valid @RequestBody RefreshTokenReq req) throws Exception {
+        return authService.refreshUserAccessToken(req.appKey(), req.refreshToken(), req.grantType());
     }
 }

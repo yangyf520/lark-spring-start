@@ -36,7 +36,7 @@ public class WebhookController {
         this.oapiProperties = oapiProperties;
     }
 
-    /** 事件订阅 URL：{@code /api/lark/webhook} 或带 appKey 的多应用路径。 */
+    /** 飞书事件回调入口：接收飞书事件订阅回调并交给 SDK 处理。 */
     @PostMapping(path = {"/webhook", "/webhook/{appKey}"})
     public void webhook(
             @PathVariable(required = false) String appKey,

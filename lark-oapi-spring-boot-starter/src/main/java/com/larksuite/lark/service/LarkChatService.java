@@ -10,7 +10,7 @@ import com.lark.oapi.service.im.v1.model.GetChatResp;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import com.larksuite.lark.support.LarkApiExecutor;
 
-/** IM 群：查询与创建会话。 */
+/** IM 群：查询与创建会话；返回完整 SDK Resp。 */
 public class LarkChatService {
 
     private final OapiClientRegistry registry;
@@ -21,7 +21,6 @@ public class LarkChatService {
         this.executor = executor;
     }
 
-    /** 按 chat_id 获取会话。 */
     public GetChatResp getChat(String appKey, String chatId) throws Exception {
         Client client = resolveClient(appKey);
         GetChatReq req = GetChatReq.newBuilder()
@@ -30,11 +29,9 @@ public class LarkChatService {
         return executor.execute(() -> client.im().chat().get(req));
     }
 
-    /** 创建群聊。 */
     public CreateChatResp createChat(String appKey, CreateChatReqBody body) throws Exception {
         Client client = resolveClient(appKey);
         CreateChatReq req = CreateChatReq.newBuilder()
-                // SDK v2.4.0 uses `userIdType` (not `idType`) for CreateChatReq
                 .userIdType(CreateChatUserIdTypeEnum.OPEN_ID)
                 .createChatReqBody(body)
                 .build();

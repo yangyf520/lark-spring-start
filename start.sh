@@ -60,6 +60,14 @@ echo $! >"$PID_DIR/backend.pid"
 echo "backend pid: $(cat "$PID_DIR/backend.pid")"
 echo "backend log: $LOG_DIR/backend.log"
 
+APP_PORT="${SERVER_PORT:-8080}"
+BASE_URL="http://127.0.0.1:${APP_PORT}"
+{
+  echo "swagger ui: ${BASE_URL}/swagger-ui/index.html"
+  echo "openapi all: ${BASE_URL}/v3/api-docs"
+  echo "openapi lark: ${BASE_URL}/v3/api-docs/lark"
+} | tee -a "$LOG_DIR/backend.log"
+
 echo
 echo "==> Following backend logs (Ctrl+C to stop following)..."
 tail -n 200 -f "$LOG_DIR/backend.log"
