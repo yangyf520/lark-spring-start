@@ -11,7 +11,9 @@ import com.larksuite.lark.service.LarkBotService;
 import com.larksuite.lark.service.LarkCalendarService;
 import com.larksuite.lark.service.LarkChatService;
 import com.larksuite.lark.service.LarkContactService;
+import com.larksuite.lark.im.ImMessageService;
 import com.larksuite.lark.service.LarkIdentityService;
+import com.larksuite.lark.service.LarkOpsAlertService;
 import com.larksuite.lark.support.LarkApiExecutor;
 import com.larksuite.lark.support.LarkClientProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -84,6 +86,12 @@ public class CommonAutoConfiguration {
     @ConditionalOnMissingBean
     public LarkChatService larkChatService(OapiClientRegistry registry, LarkApiExecutor executor) {
         return new LarkChatService(registry, executor);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public LarkOpsAlertService larkOpsAlertService(LarkChatService chatService, ImMessageService imMessageService) {
+        return new LarkOpsAlertService(chatService, imMessageService);
     }
 
     @Bean

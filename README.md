@@ -105,4 +105,22 @@ CHAT_ID=oc_xxxxxxxx ./scripts/api-lark-smoke.sh
 | `/` | 重定向至 Swagger UI |
 | `/actuator/health` | Spring 健康（若已暴露） |
 
+## 功能模块（与 `scripts/send-lark-test.sh` 一致）
+
+按脚本中的模块分隔归类；可复制脚本内对应 `curl` 单条执行。除 Webhook 外，业务 JSON 多为统一 `{ ok, time, data, error, message }`。
+
+| 功能模块 | 包含的示例接口 |
+|----------|----------------|
+| 应用入口 | `GET /`（根路径重定向 Swagger UI） |
+| 运维与可观测 | `GET /api/admin/health`，`GET /actuator/health` |
+| OAPI 客户端（多应用注册与探测） | `GET /api/lark/oapi/apps`，`GET /api/lark/oapi/tenant-access-token`，`GET /api/lark/oapi/check-app` |
+| 鉴权（租户令牌与用户 OAuth） | `POST /api/lark/auth/tenant-access-token/internal`，`POST /api/lark/auth/access-token`，`POST /api/lark/auth/refresh-access-token` |
+| 机器人 | `GET /api/lark/bot/info` |
+| 通讯录 | `GET /api/lark/contact/users/{userId}`，`GET /api/lark/contact/departments`，`POST /api/lark/contact/users/batch-get-id` |
+| 即时通讯（群会话、运维告警、发消息） | `GET /api/lark/chat/{chatId}`，`POST /api/lark/chat`，`POST /api/lark/ops/alert`（已有群 / 新建群两种），`POST /api/lark/im/send-text`，`POST /api/lark/im/send-card`，`POST /api/lark/im/update-message` |
+| 身份（用户态） | `POST /api/lark/identity/user-info` |
+| 审批 | `GET /api/lark/approval/approvals/{code}`，`GET /api/lark/approval/instances/{id}`，`POST /api/lark/approval/instances` |
+| 日历 | `GET /api/lark/calendar/events/{calendarId}/{eventId}`，`POST /api/lark/calendar/events` |
+| 事件订阅（Webhook） | `POST /api/lark/webhook`（响应为飞书/SDK 原生格式，非统一包装） |
+
 具体路径与参数以各 `*Controller` 为准；Swagger：`/swagger-ui/index.html`。
