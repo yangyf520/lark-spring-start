@@ -5,9 +5,9 @@ import com.lark.oapi.service.approval.v4.model.GetApprovalResp;
 import com.lark.oapi.service.approval.v4.model.GetInstanceResp;
 import com.lark.oapi.service.approval.v4.model.InstanceCreate;
 import com.larksuite.lark.core.common.LarkApi;
-import com.larksuite.lark.service.ApprovalService;
+import com.larksuite.lark.service.approval.ApprovalService;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import jakarta.validation.Valid;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** 审批：定义、实例查询与创建。 */
 @LarkApi
 @RestController
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterRestApi
 @RequestMapping(path = "/api/lark/approval", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ApprovalController {
 

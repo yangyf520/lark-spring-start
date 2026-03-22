@@ -8,7 +8,7 @@ import com.larksuite.lark.im.ImMessageService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** 即时消息：以应用身份发文本 / 卡片、更新消息。 */
 @LarkApi
 @RestController
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterRestApi
 @RequestMapping(path = "/api/lark/im", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ImMessageController {
 

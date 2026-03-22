@@ -1,4 +1,4 @@
-package com.larksuite.lark.service;
+package com.larksuite.lark.service.auth;
 
 import com.lark.oapi.Client;
 import com.lark.oapi.service.auth.v3.model.InternalTenantAccessTokenReq;

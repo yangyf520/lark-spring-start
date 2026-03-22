@@ -53,7 +53,7 @@ if [ -z "$BACKEND_JAR" ]; then
   exit 1
 fi
 
-# Run with backend/ as CWD so App.java's dotenv loader picks up backend/.env.
+# Run with backend/ as CWD so com.larksuite.lark.backend.App's dotenv loader picks up backend/.env.
 nohup bash -c "cd \"$ROOT_DIR/backend\" && java -jar \"$BACKEND_JAR\"" >"$LOG_DIR/backend.log" 2>&1 &
 echo $! >"$PID_DIR/backend.pid"
 

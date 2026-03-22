@@ -1,8 +1,8 @@
 package com.larksuite.lark.web;
 
 import com.larksuite.lark.core.common.LarkApi;
-import com.larksuite.lark.service.BotService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import com.larksuite.lark.service.bot.BotService;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** 机器人：代理飞书 bot v3 等能力。 */
 @LarkApi
 @RestController
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterRestApi
 @RequestMapping(path = "/api/lark/bot", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BotController {
 

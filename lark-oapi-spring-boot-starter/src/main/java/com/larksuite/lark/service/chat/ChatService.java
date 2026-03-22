@@ -1,4 +1,4 @@
-package com.larksuite.lark.service;
+package com.larksuite.lark.service.chat;
 
 import com.lark.oapi.Client;
 import com.lark.oapi.service.im.v1.enums.CreateChatUserIdTypeEnum;

@@ -1,4 +1,4 @@
-package com.larksuite.lark.service;
+package com.larksuite.lark.service.identity;
 
 import com.lark.oapi.Client;
 import com.lark.oapi.core.request.RequestOptions;

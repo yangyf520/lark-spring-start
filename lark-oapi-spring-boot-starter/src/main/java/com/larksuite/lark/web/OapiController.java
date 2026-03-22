@@ -4,7 +4,7 @@ import com.larksuite.lark.core.common.LarkApi;
 import com.larksuite.lark.core.token.TenantAccessTokenProvider;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,7 @@ import java.util.Map;
 /** 多应用 OAPI Client 注册信息与 token 探测（不含密钥）。 */
 @LarkApi
 @RestController
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterRestApi
 @RequestMapping(path = "/api/lark/oapi", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OapiController {
 

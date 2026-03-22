@@ -1,4 +1,4 @@
-package com.larksuite.lark.service;
+package com.larksuite.lark.service.bot;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

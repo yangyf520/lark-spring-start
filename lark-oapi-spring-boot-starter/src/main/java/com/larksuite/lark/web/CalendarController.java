@@ -4,10 +4,10 @@ import com.lark.oapi.service.calendar.v4.model.CalendarEvent;
 import com.lark.oapi.service.calendar.v4.model.CreateCalendarEventResp;
 import com.lark.oapi.service.calendar.v4.model.GetCalendarEventResp;
 import com.larksuite.lark.core.common.LarkApi;
-import com.larksuite.lark.service.CalendarService;
+import com.larksuite.lark.service.calendar.CalendarService;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** 日历：事件查询与创建。 */
 @LarkApi
 @RestController
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterRestApi
 @RequestMapping(path = "/api/lark/calendar", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CalendarController {
 

@@ -6,7 +6,7 @@ import com.larksuite.lark.oapi.spring.OapiEventDispatcherRegistry;
 import com.larksuite.lark.oapi.spring.OapiProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterWebhook;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 /** 飞书事件 HTTP 回调：验签解密后交给 SDK {@link com.lark.oapi.event.EventDispatcher}。 */
 @RestController
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterWebhook
 @RequestMapping(path = "/api/lark", produces = MediaType.APPLICATION_JSON_VALUE)
 public class WebhookController {
 

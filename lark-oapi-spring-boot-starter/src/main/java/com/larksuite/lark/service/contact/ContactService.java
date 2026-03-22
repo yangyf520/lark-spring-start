@@ -1,4 +1,4 @@
-package com.larksuite.lark.service;
+package com.larksuite.lark.service.contact;
 
 import com.lark.oapi.Client;
 import com.lark.oapi.service.contact.v3.model.BatchGetIdUserReq;

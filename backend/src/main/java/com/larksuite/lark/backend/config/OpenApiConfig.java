@@ -1,6 +1,7 @@
-package com.larksuite.lark.config;
+package com.larksuite.lark.backend.config;
 
 import com.larksuite.lark.core.common.LarkApi;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.BooleanSchema;
@@ -36,6 +37,7 @@ public class OpenApiConfig {
      * 避免文档只显示 data、与真实 HTTP JSON 不一致。
      */
     @Bean
+    @ConditionalOnStarterRestApi
     public OperationCustomizer larkApiResponseEnvelopeCustomizer() {
         return (operation, handlerMethod) -> {
             if (!isLarkApi(handlerMethod)) {

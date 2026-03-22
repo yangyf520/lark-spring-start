@@ -5,15 +5,15 @@ import com.larksuite.lark.core.token.TenantAccessTokenProvider;
 import com.larksuite.lark.im.ImMessageService;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import com.larksuite.lark.oapi.spring.OapiProperties;
-import com.larksuite.lark.oapi.spring.WebProperties;
-import com.larksuite.lark.service.ApprovalService;
-import com.larksuite.lark.service.AuthService;
-import com.larksuite.lark.service.BotService;
-import com.larksuite.lark.service.CalendarService;
-import com.larksuite.lark.service.ChatService;
-import com.larksuite.lark.service.ContactService;
-import com.larksuite.lark.service.IdentityService;
-import com.larksuite.lark.service.OpsAlertService;
+import com.larksuite.lark.oapi.spring.StarterApiProperties;
+import com.larksuite.lark.service.approval.ApprovalService;
+import com.larksuite.lark.service.auth.AuthService;
+import com.larksuite.lark.service.bot.BotService;
+import com.larksuite.lark.service.calendar.CalendarService;
+import com.larksuite.lark.service.chat.ChatService;
+import com.larksuite.lark.service.contact.ContactService;
+import com.larksuite.lark.service.identity.IdentityService;
+import com.larksuite.lark.service.ops.OpsAlertService;
 import com.larksuite.lark.support.ApiExecutor;
 import com.larksuite.lark.support.ClientProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -25,24 +25,18 @@ import java.net.http.HttpClient;
 import java.time.Duration;
 
 @AutoConfiguration
-@EnableConfigurationProperties({OapiProperties.class, WebProperties.class, ClientProperties.class})
+@EnableConfigurationProperties({OapiProperties.class, StarterApiProperties.class, ClientProperties.class})
 public class CommonAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public HttpClient httpClient() {
-        return HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(15))
-                .build();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
     public TenantAccessTokenProvider tenantAccessTokenProvider(
-            HttpClient httpClient,
             OapiProperties oapiProperties,
             ObjectMapper objectMapper
     ) {
+        HttpClient httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(15))
+                .build();
         return new TenantAccessTokenProvider(httpClient, oapiProperties, objectMapper);
     }
 

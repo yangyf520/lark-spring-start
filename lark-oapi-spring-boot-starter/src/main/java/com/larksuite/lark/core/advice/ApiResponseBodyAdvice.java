@@ -3,7 +3,7 @@ package com.larksuite.lark.core.advice;
 import com.lark.oapi.core.response.BaseResponse;
 import com.larksuite.lark.api.dto.ApiResponse;
 import com.larksuite.lark.core.common.LarkApi;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * 若返回飞书 SDK 的 {@link BaseResponse}：按 success/code 转为成功（仅 data 入包）或失败；其它类型则作为 {@code data} 原样包装。
  */
 @RestControllerAdvice(annotations = LarkApi.class)
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterRestApi
 public class ApiResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override

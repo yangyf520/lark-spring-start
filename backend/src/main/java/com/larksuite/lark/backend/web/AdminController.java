@@ -1,4 +1,4 @@
-package com.larksuite.lark.web;
+package com.larksuite.lark.backend.web;
 
 import com.larksuite.lark.core.token.TenantAccessTokenProvider;
 import org.springframework.http.MediaType;

@@ -1,4 +1,4 @@
-package com.larksuite.lark.web;
+package com.larksuite.lark.backend.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,4 +13,3 @@ public class SwaggerRedirectController {
         return "redirect:/swagger-ui/index.html";
     }
 }
-

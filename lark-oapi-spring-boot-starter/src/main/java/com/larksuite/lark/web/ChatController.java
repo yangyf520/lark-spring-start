@@ -4,9 +4,9 @@ import com.lark.oapi.service.im.v1.model.CreateChatReqBody;
 import com.lark.oapi.service.im.v1.model.CreateChatResp;
 import com.lark.oapi.service.im.v1.model.GetChatResp;
 import com.larksuite.lark.core.common.LarkApi;
-import com.larksuite.lark.service.ChatService;
+import com.larksuite.lark.service.chat.ChatService;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import jakarta.validation.Valid;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** 即时通讯：群会话查询与创建。 */
 @LarkApi
 @RestController
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterRestApi
 @RequestMapping(path = "/api/lark/chat", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ChatController {
 

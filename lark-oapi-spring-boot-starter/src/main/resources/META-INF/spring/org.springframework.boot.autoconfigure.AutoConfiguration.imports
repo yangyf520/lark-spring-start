@@ -1,4 +1,6 @@
 com.larksuite.lark.oapi.spring.OapiAutoConfiguration
 com.larksuite.lark.starter.CommonAutoConfiguration
 com.larksuite.lark.starter.ImAutoConfiguration
+com.larksuite.lark.starter.LarkRestWebAutoConfiguration
+com.larksuite.lark.starter.LarkWebhookAutoConfiguration
 

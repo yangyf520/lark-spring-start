@@ -4,10 +4,10 @@ import com.lark.oapi.service.auth.v3.model.InternalTenantAccessTokenResp;
 import com.lark.oapi.service.authen.v1.model.CreateAccessTokenResp;
 import com.lark.oapi.service.authen.v1.model.CreateRefreshAccessTokenResp;
 import com.larksuite.lark.core.common.LarkApi;
-import com.larksuite.lark.service.AuthService;
+import com.larksuite.lark.service.auth.AuthService;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** 飞书鉴权：租户 token、用户 OAuth code 换票与刷新（成功/失败由全局 Advice 与 Service 统一处理）。 */
 @LarkApi
 @RestController
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterRestApi
 @RequestMapping(path = "/api/lark/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthController {
 

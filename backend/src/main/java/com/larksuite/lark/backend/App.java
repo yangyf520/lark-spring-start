@@ -1,9 +1,13 @@
-package com.larksuite.lark;
+package com.larksuite.lark.backend;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * 启动类放在 {@code com.larksuite.lark.backend}，默认仅扫描本包及子包，
+ * 避免与 {@code lark-oapi-spring-boot-starter} 内 {@code com.larksuite.lark.web} 重复注册。
+ */
 @SpringBootApplication
 public class App {
 
@@ -24,4 +28,3 @@ public class App {
         });
     }
 }
-

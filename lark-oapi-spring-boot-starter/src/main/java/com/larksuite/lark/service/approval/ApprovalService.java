@@ -1,4 +1,4 @@
-package com.larksuite.lark.service;
+package com.larksuite.lark.service.approval;
 
 import com.lark.oapi.Client;
 import com.lark.oapi.service.approval.v4.model.CreateInstanceReq;

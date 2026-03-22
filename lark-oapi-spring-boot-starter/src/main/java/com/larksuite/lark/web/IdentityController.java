@@ -2,10 +2,10 @@ package com.larksuite.lark.web;
 
 import com.lark.oapi.service.authen.v1.model.GetUserInfoResp;
 import com.larksuite.lark.core.common.LarkApi;
-import com.larksuite.lark.service.IdentityService;
+import com.larksuite.lark.service.identity.IdentityService;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** 用户身份：需 user_access_token。 */
 @LarkApi
 @RestController
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterRestApi
 @RequestMapping(path = "/api/lark/identity", produces = MediaType.APPLICATION_JSON_VALUE)
 public class IdentityController {
 

@@ -1,6 +1,6 @@
 package com.larksuite.lark.core.advice;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /** 注册 OpenAPI 控制器拦截器：统一日志，不包含事件回调（原始响应由 SDK 写出）。 */
 @Configuration
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterRestApi
 public class OapiWebMvcConfiguration implements WebMvcConfigurer {
 
     private final ApiLoggingInterceptor loggingInterceptor;

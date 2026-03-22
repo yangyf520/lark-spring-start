@@ -24,6 +24,12 @@ logging:
     com.lark.oapi.core.Transport: DEBUG
 
 lark:
+  # api:
+  #   enabled: true       # 总开关：false 时不注册 starter 的 REST 与 Webhook
+  #   rest:
+  #     enabled: true     # /api/lark/** JSON API（@LarkApi、统一响应、DEBUG 拦截器）
+  #   webhook:
+  #     enabled: true     # POST /api/lark/webhook（事件订阅回调）
   oapi:
     primary: default
     apps:

@@ -4,9 +4,9 @@ import com.lark.oapi.service.contact.v3.model.BatchGetIdUserResp;
 import com.lark.oapi.service.contact.v3.model.GetUserResp;
 import com.lark.oapi.service.contact.v3.model.ListDepartmentResp;
 import com.larksuite.lark.core.common.LarkApi;
-import com.larksuite.lark.service.ContactService;
+import com.larksuite.lark.service.contact.ContactService;
+import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import jakarta.validation.Valid;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** 通讯录：用户 / 部门 / 批量换 ID。 */
 @LarkApi
 @RestController
-@ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnStarterRestApi
 @RequestMapping(path = "/api/lark/contact", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ContactController {
 

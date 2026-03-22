@@ -1,4 +1,4 @@
-package com.larksuite.lark.service;
+package com.larksuite.lark.service.calendar;
 
 import com.lark.oapi.Client;
 import com.lark.oapi.service.calendar.v4.model.CalendarEvent;
