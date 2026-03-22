@@ -13,14 +13,14 @@ import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 /**
  * 通讯录 contact v3：用户、部门、批量换 ID。
  * <p>
- * 返回完整 SDK Resp；经 {@link com.larksuite.lark.core.advice.LarkApiResponseBodyAdvice} 写出 HTTP 时再解包为 {@link com.larksuite.lark.api.dto.ApiResponse}。
+ * 返回完整 SDK Resp；经 {@link com.larksuite.lark.core.advice.ApiResponseBodyAdvice} 写出 HTTP 时再解包为 {@link com.larksuite.lark.api.dto.ApiResponse}。
  * 若其它模块直接注入调用，请自行根据 {@code success()} / {@code getData()} 处理。
  */
-public class LarkContactService {
+public class ContactService {
 
     private final OapiClientRegistry clientRegistry;
 
-    public LarkContactService(OapiClientRegistry clientRegistry) {
+    public ContactService(OapiClientRegistry clientRegistry) {
         this.clientRegistry = clientRegistry;
     }
 

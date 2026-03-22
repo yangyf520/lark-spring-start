@@ -3,8 +3,8 @@ package com.larksuite.lark.web;
 import com.lark.oapi.service.auth.v3.model.InternalTenantAccessTokenResp;
 import com.lark.oapi.service.authen.v1.model.CreateAccessTokenResp;
 import com.lark.oapi.service.authen.v1.model.CreateRefreshAccessTokenResp;
-import com.larksuite.lark.core.advice.LarkApi;
-import com.larksuite.lark.service.LarkAuthService;
+import com.larksuite.lark.core.common.LarkApi;
+import com.larksuite.lark.service.AuthService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/lark/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthController {
 
-    private final LarkAuthService authService;
+    private final AuthService authService;
 
-    public AuthController(LarkAuthService authService) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
     }
 

@@ -9,15 +9,15 @@ import com.lark.oapi.service.approval.v4.model.GetInstanceReq;
 import com.lark.oapi.service.approval.v4.model.GetInstanceResp;
 import com.lark.oapi.service.approval.v4.model.InstanceCreate;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
-import com.larksuite.lark.support.LarkApiExecutor;
+import com.larksuite.lark.support.ApiExecutor;
 
 /** 审批 v4：定义、实例、创建；返回完整 SDK Resp。 */
-public class LarkApprovalService {
+public class ApprovalService {
 
     private final OapiClientRegistry registry;
-    private final LarkApiExecutor executor;
+    private final ApiExecutor executor;
 
-    public LarkApprovalService(OapiClientRegistry registry, LarkApiExecutor executor) {
+    public ApprovalService(OapiClientRegistry registry, ApiExecutor executor) {
         this.registry = registry;
         this.executor = executor;
     }

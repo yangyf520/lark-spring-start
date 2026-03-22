@@ -3,8 +3,8 @@ package com.larksuite.lark.web;
 import com.lark.oapi.service.im.v1.model.CreateChatReqBody;
 import com.lark.oapi.service.im.v1.model.CreateChatResp;
 import com.lark.oapi.service.im.v1.model.GetChatResp;
-import com.larksuite.lark.core.advice.LarkApi;
-import com.larksuite.lark.service.LarkChatService;
+import com.larksuite.lark.core.common.LarkApi;
+import com.larksuite.lark.service.ChatService;
 import jakarta.validation.Valid;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/lark/chat", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ChatController {
 
-    private final LarkChatService chatService;
+    private final ChatService chatService;
 
-    public ChatController(LarkChatService chatService) {
+    public ChatController(ChatService chatService) {
         this.chatService = chatService;
     }
 

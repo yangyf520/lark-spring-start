@@ -4,8 +4,8 @@ import com.lark.oapi.service.approval.v4.model.CreateInstanceResp;
 import com.lark.oapi.service.approval.v4.model.GetApprovalResp;
 import com.lark.oapi.service.approval.v4.model.GetInstanceResp;
 import com.lark.oapi.service.approval.v4.model.InstanceCreate;
-import com.larksuite.lark.core.advice.LarkApi;
-import com.larksuite.lark.service.LarkApprovalService;
+import com.larksuite.lark.core.common.LarkApi;
+import com.larksuite.lark.service.ApprovalService;
 import jakarta.validation.Valid;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/lark/approval", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ApprovalController {
 
-    private final LarkApprovalService approvalService;
+    private final ApprovalService approvalService;
 
-    public ApprovalController(LarkApprovalService approvalService) {
+    public ApprovalController(ApprovalService approvalService) {
         this.approvalService = approvalService;
     }
 

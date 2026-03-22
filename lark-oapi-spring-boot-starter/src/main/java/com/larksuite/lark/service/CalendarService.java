@@ -7,15 +7,15 @@ import com.lark.oapi.service.calendar.v4.model.CreateCalendarEventResp;
 import com.lark.oapi.service.calendar.v4.model.GetCalendarEventReq;
 import com.lark.oapi.service.calendar.v4.model.GetCalendarEventResp;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
-import com.larksuite.lark.support.LarkApiExecutor;
+import com.larksuite.lark.support.ApiExecutor;
 
 /** 日历 v4：事件查询与创建；返回完整 SDK Resp。 */
-public class LarkCalendarService {
+public class CalendarService {
 
     private final OapiClientRegistry registry;
-    private final LarkApiExecutor executor;
+    private final ApiExecutor executor;
 
-    public LarkCalendarService(OapiClientRegistry registry, LarkApiExecutor executor) {
+    public CalendarService(OapiClientRegistry registry, ApiExecutor executor) {
         this.registry = registry;
         this.executor = executor;
     }

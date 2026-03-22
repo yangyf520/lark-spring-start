@@ -10,14 +10,14 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
- * 运维告警：新建群并发送首条文本，或向已有群发送一条文本（成员 ID 与 {@link LarkChatService#createChat} 一致，为 open_id）。
+ * 运维告警：新建群并发送首条文本，或向已有群发送一条文本（成员 ID 与 {@link ChatService#createChat} 一致，为 open_id）。
  */
-public class LarkOpsAlertService {
+public class OpsAlertService {
 
-    private final LarkChatService chatService;
+    private final ChatService chatService;
     private final ImMessageService imMessageService;
 
-    public LarkOpsAlertService(LarkChatService chatService, ImMessageService imMessageService) {
+    public OpsAlertService(ChatService chatService, ImMessageService imMessageService) {
         this.chatService = chatService;
         this.imMessageService = imMessageService;
     }

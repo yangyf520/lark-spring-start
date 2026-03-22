@@ -6,14 +6,14 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/** 注册 Lark API 拦截器：统一日志，不包含事件回调（原始响应由 SDK 写出）。 */
+/** 注册 OpenAPI 控制器拦截器：统一日志，不包含事件回调（原始响应由 SDK 写出）。 */
 @Configuration
 @ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class LarkWebMvcConfiguration implements WebMvcConfigurer {
+public class OapiWebMvcConfiguration implements WebMvcConfigurer {
 
-    private final LarkApiLoggingInterceptor loggingInterceptor;
+    private final ApiLoggingInterceptor loggingInterceptor;
 
-    public LarkWebMvcConfiguration(LarkApiLoggingInterceptor loggingInterceptor) {
+    public OapiWebMvcConfiguration(ApiLoggingInterceptor loggingInterceptor) {
         this.loggingInterceptor = loggingInterceptor;
     }
 

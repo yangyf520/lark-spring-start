@@ -1,7 +1,8 @@
 package com.larksuite.lark.core.advice;
 
 import com.larksuite.lark.api.dto.ApiResponse;
-import com.larksuite.lark.api.exception.LarkSdkException;
+import com.larksuite.lark.api.exception.SdkException;
+import com.larksuite.lark.core.common.LarkApi;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -11,13 +12,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.stream.Collectors;
 
-/** 将未捕获异常转为 {@link ApiResponse}（HTTP 200 + ok=false），与 {@link LarkApiResponseBodyAdvice} 成功包装对称。 */
+/** 将未捕获异常转为 {@link ApiResponse}（HTTP 200 + ok=false），与 {@link ApiResponseBodyAdvice} 成功包装对称。 */
 @RestControllerAdvice(annotations = LarkApi.class)
 @ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class LarkApiExceptionHandler {
+public class ApiExceptionHandler {
 
-    @ExceptionHandler(LarkSdkException.class)
-    public ApiResponse handleLarkSdk(LarkSdkException e) {
+    @ExceptionHandler(SdkException.class)
+    public ApiResponse handleSdk(SdkException e) {
         return ApiResponse.failure(e.getErrorCode(), e.getMessage());
     }
 

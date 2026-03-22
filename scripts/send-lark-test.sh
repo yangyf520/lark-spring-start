@@ -135,7 +135,7 @@ curl -sS 'http://127.0.0.1:8080/api/lark/chat/oc_xxx?appKey=default' | python3 -
 echo ""
 
 # --- POST /api/lark/chat ---
-# 功能：创建群聊。嵌套 body 对应飞书 CreateChatReqBody（创建时 userIdList 等为 open_id，与本服务 LarkChatService 一致）。
+# 功能：创建群聊。嵌套 body 对应飞书 CreateChatReqBody（创建时 userIdList 等为 open_id，与本服务 ChatService 一致）。
 # 参数（JSON）：appKey 可选。
 # body 常用字段：name 必填；description；avatar；ownerId；userIdList[]；botIdList[]；groupMessageType；chatMode；chatType；
 #   joinMessageVisibility；leaveMessageVisibility；membershipApproval；urgentSetting；videoConferenceSetting；editPermission；hideMemberCountSetting；

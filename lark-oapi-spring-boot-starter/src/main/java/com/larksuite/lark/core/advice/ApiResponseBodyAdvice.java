@@ -2,6 +2,7 @@ package com.larksuite.lark.core.advice;
 
 import com.lark.oapi.core.response.BaseResponse;
 import com.larksuite.lark.api.dto.ApiResponse;
+import com.larksuite.lark.core.common.LarkApi;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -19,7 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 @RestControllerAdvice(annotations = LarkApi.class)
 @ConditionalOnProperty(prefix = "lark.api", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class LarkApiResponseBodyAdvice implements ResponseBodyAdvice<Object> {
+public class ApiResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(@NonNull MethodParameter returnType, @NonNull Class<? extends HttpMessageConverter<?>> converterType) {

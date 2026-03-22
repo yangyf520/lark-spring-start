@@ -5,25 +5,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lark.oapi.Client;
 import com.lark.oapi.core.response.RawResponse;
 import com.lark.oapi.core.token.AccessTokenType;
-import com.larksuite.lark.api.exception.LarkSdkException;
+import com.larksuite.lark.api.exception.SdkException;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
-import com.larksuite.lark.support.LarkApiExecutor;
+import com.larksuite.lark.support.ApiExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 
 /** 机器人相关 HTTP：未生成强类型 SDK 时用 {@link Client#get} 调飞书。 */
-public class LarkBotService {
+public class BotService {
 
-    private static final Logger log = LoggerFactory.getLogger(LarkBotService.class);
+    private static final Logger log = LoggerFactory.getLogger(BotService.class);
     private static final String PATH_BOT_V3_INFO = "/open-apis/bot/v3/info";
 
     private final OapiClientRegistry registry;
-    private final LarkApiExecutor executor;
+    private final ApiExecutor executor;
     private final ObjectMapper objectMapper;
 
-    public LarkBotService(OapiClientRegistry registry, LarkApiExecutor executor, ObjectMapper objectMapper) {
+    public BotService(OapiClientRegistry registry, ApiExecutor executor, ObjectMapper objectMapper) {
         this.registry = registry;
         this.executor = executor;
         this.objectMapper = objectMapper;
@@ -53,13 +53,13 @@ public class LarkBotService {
 
     /**
      * 解析 {@link #getBotInfo(String)} 的 JSON，成功时返回机器人 data（与 HTTP API 一致）；
-     * 业务错误码时抛 {@link LarkSdkException}。
+     * 业务错误码时抛 {@link SdkException}。
      */
     public Object getBotPayload(String appKey) throws Exception {
         JsonNode root = getBotInfo(appKey);
         int code = root.path("code").asInt(0);
         if (code != 0) {
-            throw new LarkSdkException(String.valueOf(code), root.path("msg").asText(""));
+            throw new SdkException(String.valueOf(code), root.path("msg").asText(""));
         }
         JsonNode data = root.get("bot");
         if (data == null || data.isNull()) {

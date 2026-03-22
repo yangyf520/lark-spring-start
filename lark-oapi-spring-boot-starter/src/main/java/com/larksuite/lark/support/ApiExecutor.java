@@ -3,11 +3,11 @@ package com.larksuite.lark.support;
 import java.util.concurrent.Callable;
 
 /** 飞书 SDK 调用简单重试封装。 */
-public class LarkApiExecutor {
+public class ApiExecutor {
 
-    private final LarkClientProperties properties;
+    private final ClientProperties properties;
 
-    public LarkApiExecutor(LarkClientProperties properties) {
+    public ApiExecutor(ClientProperties properties) {
         this.properties = properties;
     }
 

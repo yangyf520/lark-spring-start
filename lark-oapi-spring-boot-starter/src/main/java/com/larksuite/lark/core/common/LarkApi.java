@@ -1,4 +1,4 @@
-package com.larksuite.lark.core.advice;
+package com.larksuite.lark.core.common;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

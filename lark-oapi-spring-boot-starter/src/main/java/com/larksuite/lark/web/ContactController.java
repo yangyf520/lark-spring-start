@@ -3,8 +3,8 @@ package com.larksuite.lark.web;
 import com.lark.oapi.service.contact.v3.model.BatchGetIdUserResp;
 import com.lark.oapi.service.contact.v3.model.GetUserResp;
 import com.lark.oapi.service.contact.v3.model.ListDepartmentResp;
-import com.larksuite.lark.core.advice.LarkApi;
-import com.larksuite.lark.service.LarkContactService;
+import com.larksuite.lark.core.common.LarkApi;
+import com.larksuite.lark.service.ContactService;
 import jakarta.validation.Valid;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/lark/contact", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ContactController {
 
-    private final LarkContactService contactService;
+    private final ContactService contactService;
 
-    public ContactController(LarkContactService contactService) {
+    public ContactController(ContactService contactService) {
         this.contactService = contactService;
     }
 

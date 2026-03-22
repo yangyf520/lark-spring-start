@@ -2,20 +2,20 @@ package com.larksuite.lark.starter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.larksuite.lark.core.token.TenantAccessTokenProvider;
-import com.larksuite.lark.oapi.spring.LarkWebProperties;
+import com.larksuite.lark.im.ImMessageService;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import com.larksuite.lark.oapi.spring.OapiProperties;
-import com.larksuite.lark.service.LarkApprovalService;
-import com.larksuite.lark.service.LarkAuthService;
-import com.larksuite.lark.service.LarkBotService;
-import com.larksuite.lark.service.LarkCalendarService;
-import com.larksuite.lark.service.LarkChatService;
-import com.larksuite.lark.service.LarkContactService;
-import com.larksuite.lark.im.ImMessageService;
-import com.larksuite.lark.service.LarkIdentityService;
-import com.larksuite.lark.service.LarkOpsAlertService;
-import com.larksuite.lark.support.LarkApiExecutor;
-import com.larksuite.lark.support.LarkClientProperties;
+import com.larksuite.lark.oapi.spring.WebProperties;
+import com.larksuite.lark.service.ApprovalService;
+import com.larksuite.lark.service.AuthService;
+import com.larksuite.lark.service.BotService;
+import com.larksuite.lark.service.CalendarService;
+import com.larksuite.lark.service.ChatService;
+import com.larksuite.lark.service.ContactService;
+import com.larksuite.lark.service.IdentityService;
+import com.larksuite.lark.service.OpsAlertService;
+import com.larksuite.lark.support.ApiExecutor;
+import com.larksuite.lark.support.ClientProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,7 +25,7 @@ import java.net.http.HttpClient;
 import java.time.Duration;
 
 @AutoConfiguration
-@EnableConfigurationProperties({OapiProperties.class, LarkWebProperties.class, LarkClientProperties.class})
+@EnableConfigurationProperties({OapiProperties.class, WebProperties.class, ClientProperties.class})
 public class CommonAutoConfiguration {
 
     @Bean
@@ -48,56 +48,55 @@ public class CommonAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public LarkAuthService larkAuthService(OapiClientRegistry registry, OapiProperties properties) {
-        return new LarkAuthService(registry, properties);
+    public AuthService authService(OapiClientRegistry registry, OapiProperties properties) {
+        return new AuthService(registry, properties);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public LarkContactService larkContactService(OapiClientRegistry registry) {
-        return new LarkContactService(registry);
+    public ContactService contactService(OapiClientRegistry registry) {
+        return new ContactService(registry);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public LarkApiExecutor larkApiExecutor(LarkClientProperties properties) {
-        return new LarkApiExecutor(properties);
+    public ApiExecutor apiExecutor(ClientProperties properties) {
+        return new ApiExecutor(properties);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public LarkIdentityService larkIdentityService(OapiClientRegistry registry, LarkApiExecutor executor) {
-        return new LarkIdentityService(registry, executor);
+    public IdentityService identityService(OapiClientRegistry registry, ApiExecutor executor) {
+        return new IdentityService(registry, executor);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public LarkApprovalService larkApprovalService(OapiClientRegistry registry, LarkApiExecutor executor) {
-        return new LarkApprovalService(registry, executor);
+    public ApprovalService approvalService(OapiClientRegistry registry, ApiExecutor executor) {
+        return new ApprovalService(registry, executor);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public LarkCalendarService larkCalendarService(OapiClientRegistry registry, LarkApiExecutor executor) {
-        return new LarkCalendarService(registry, executor);
+    public CalendarService calendarService(OapiClientRegistry registry, ApiExecutor executor) {
+        return new CalendarService(registry, executor);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public LarkChatService larkChatService(OapiClientRegistry registry, LarkApiExecutor executor) {
-        return new LarkChatService(registry, executor);
+    public ChatService chatService(OapiClientRegistry registry, ApiExecutor executor) {
+        return new ChatService(registry, executor);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public LarkOpsAlertService larkOpsAlertService(LarkChatService chatService, ImMessageService imMessageService) {
-        return new LarkOpsAlertService(chatService, imMessageService);
+    public OpsAlertService opsAlertService(ChatService chatService, ImMessageService imMessageService) {
+        return new OpsAlertService(chatService, imMessageService);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public LarkBotService larkBotService(OapiClientRegistry registry, LarkApiExecutor executor, ObjectMapper objectMapper) {
-        return new LarkBotService(registry, executor, objectMapper);
+    public BotService botService(OapiClientRegistry registry, ApiExecutor executor, ObjectMapper objectMapper) {
+        return new BotService(registry, executor, objectMapper);
     }
 }
-

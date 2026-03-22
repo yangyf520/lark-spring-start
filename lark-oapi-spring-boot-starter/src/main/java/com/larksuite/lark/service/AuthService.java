@@ -14,12 +14,12 @@ import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import com.larksuite.lark.oapi.spring.OapiProperties;
 
 /** auth / authen：租户 token、用户 OAuth 换票；返回完整 SDK Resp（HTTP 由 Advice 解包）。 */
-public class LarkAuthService {
+public class AuthService {
 
     private final OapiClientRegistry clientRegistry;
     private final OapiProperties oapiProperties;
 
-    public LarkAuthService(OapiClientRegistry clientRegistry, OapiProperties oapiProperties) {
+    public AuthService(OapiClientRegistry clientRegistry, OapiProperties oapiProperties) {
         this.clientRegistry = clientRegistry;
         this.oapiProperties = oapiProperties;
     }

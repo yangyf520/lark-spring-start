@@ -11,12 +11,11 @@ import com.lark.oapi.service.im.v1.model.UpdateMessageReq;
 import com.lark.oapi.service.im.v1.model.UpdateMessageReqBody;
 import com.lark.oapi.service.im.v1.model.UpdateMessageResp;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
-import com.larksuite.lark.service.LarkImApi;
 
 import java.util.Objects;
 
 /** 以应用身份调用 IM v1：发文本、卡片、更新消息；返回完整 SDK Resp。 */
-public class ImMessageService implements LarkImApi {
+public class ImMessageService {
 
     private final OapiClientRegistry registry;
     private final ObjectMapper objectMapper;
@@ -26,7 +25,6 @@ public class ImMessageService implements LarkImApi {
         this.objectMapper = objectMapper;
     }
 
-    @Override
     public CreateMessageResp sendText(String appKey, ReceiveIdTypeEnum receiveIdType, String receiveId, String text) throws Exception {
         Objects.requireNonNull(receiveIdType, "receiveIdType");
         if (receiveId == null || receiveId.isBlank()) {

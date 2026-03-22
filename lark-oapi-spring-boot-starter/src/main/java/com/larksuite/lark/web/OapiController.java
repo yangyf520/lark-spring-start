@@ -1,6 +1,6 @@
 package com.larksuite.lark.web;
 
-import com.larksuite.lark.core.advice.LarkApi;
+import com.larksuite.lark.core.common.LarkApi;
 import com.larksuite.lark.core.token.TenantAccessTokenProvider;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import jakarta.validation.constraints.NotBlank;

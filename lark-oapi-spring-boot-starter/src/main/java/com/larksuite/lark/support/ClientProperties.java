@@ -3,7 +3,7 @@ package com.larksuite.lark.support;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "lark.client")
-public class LarkClientProperties {
+public class ClientProperties {
 
     private int retryTimes = 2;
     private long retryIntervalMs = 200;

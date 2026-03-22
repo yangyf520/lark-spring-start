@@ -1,7 +1,7 @@
 package com.larksuite.lark.web;
 
-import com.larksuite.lark.core.advice.LarkApi;
-import com.larksuite.lark.service.LarkBotService;
+import com.larksuite.lark.core.common.LarkApi;
+import com.larksuite.lark.service.BotService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/lark/bot", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BotController {
 
-    private final LarkBotService botService;
+    private final BotService botService;
 
-    public BotController(LarkBotService botService) {
+    public BotController(BotService botService) {
         this.botService = botService;
     }
 

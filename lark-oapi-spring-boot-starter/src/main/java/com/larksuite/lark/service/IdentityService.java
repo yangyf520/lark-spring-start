@@ -4,15 +4,15 @@ import com.lark.oapi.Client;
 import com.lark.oapi.core.request.RequestOptions;
 import com.lark.oapi.service.authen.v1.model.GetUserInfoResp;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
-import com.larksuite.lark.support.LarkApiExecutor;
+import com.larksuite.lark.support.ApiExecutor;
 
 /** 用户身份：需 user_access_token；返回完整 SDK Resp。 */
-public class LarkIdentityService {
+public class IdentityService {
 
     private final OapiClientRegistry registry;
-    private final LarkApiExecutor executor;
+    private final ApiExecutor executor;
 
-    public LarkIdentityService(OapiClientRegistry registry, LarkApiExecutor executor) {
+    public IdentityService(OapiClientRegistry registry, ApiExecutor executor) {
         this.registry = registry;
         this.executor = executor;
     }

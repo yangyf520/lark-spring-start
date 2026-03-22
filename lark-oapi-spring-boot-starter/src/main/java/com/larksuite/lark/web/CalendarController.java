@@ -3,8 +3,8 @@ package com.larksuite.lark.web;
 import com.lark.oapi.service.calendar.v4.model.CalendarEvent;
 import com.lark.oapi.service.calendar.v4.model.CreateCalendarEventResp;
 import com.lark.oapi.service.calendar.v4.model.GetCalendarEventResp;
-import com.larksuite.lark.core.advice.LarkApi;
-import com.larksuite.lark.service.LarkCalendarService;
+import com.larksuite.lark.core.common.LarkApi;
+import com.larksuite.lark.service.CalendarService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/lark/calendar", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CalendarController {
 
-    private final LarkCalendarService calendarService;
+    private final CalendarService calendarService;
 
-    public CalendarController(LarkCalendarService calendarService) {
+    public CalendarController(CalendarService calendarService) {
         this.calendarService = calendarService;
     }
 

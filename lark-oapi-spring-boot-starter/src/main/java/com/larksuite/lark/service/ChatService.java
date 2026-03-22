@@ -8,15 +8,15 @@ import com.lark.oapi.service.im.v1.model.CreateChatResp;
 import com.lark.oapi.service.im.v1.model.GetChatReq;
 import com.lark.oapi.service.im.v1.model.GetChatResp;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
-import com.larksuite.lark.support.LarkApiExecutor;
+import com.larksuite.lark.support.ApiExecutor;
 
 /** IM 群：查询与创建会话；返回完整 SDK Resp。 */
-public class LarkChatService {
+public class ChatService {
 
     private final OapiClientRegistry registry;
-    private final LarkApiExecutor executor;
+    private final ApiExecutor executor;
 
-    public LarkChatService(OapiClientRegistry registry, LarkApiExecutor executor) {
+    public ChatService(OapiClientRegistry registry, ApiExecutor executor) {
         this.registry = registry;
         this.executor = executor;
     }

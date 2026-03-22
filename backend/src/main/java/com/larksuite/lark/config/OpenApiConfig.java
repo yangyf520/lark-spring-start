@@ -1,6 +1,6 @@
 package com.larksuite.lark.config;
 
-import com.larksuite.lark.core.advice.LarkApi;
+import com.larksuite.lark.core.common.LarkApi;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.BooleanSchema;
@@ -26,7 +26,7 @@ public class OpenApiConfig {
                 .version("v1")
                 .description(
                         "分组 **lark** 下接口：Controller 返回飞书 SDK 的 `*Resp`（`BaseResponse`），"
-                                + "由 `LarkApiResponseBodyAdvice` 转为统一 `ApiResponse`。"
+                                + "由 `ApiResponseBodyAdvice` 转为统一 `ApiResponse`。"
                                 + "文档 200 中 **data** 对应 SDK 的 `data` 字段（业务载荷），而非整段 Resp。"
                 ));
     }

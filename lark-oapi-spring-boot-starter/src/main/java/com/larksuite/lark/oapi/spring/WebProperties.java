@@ -3,7 +3,7 @@ package com.larksuite.lark.oapi.spring;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "lark.api")
-public class LarkWebProperties {
+public class WebProperties {
 
     /**
      * Enable starter-provided REST controllers.
