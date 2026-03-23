@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @LarkApi
 @RestController
 @ConditionalOnStarterRestApi
-@RequestMapping(path = "/api/lark/bot", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/lark/bot", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BotController {
 
     private final BotService botService;

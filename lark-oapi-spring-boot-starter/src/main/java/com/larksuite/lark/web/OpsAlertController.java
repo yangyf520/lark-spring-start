@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @LarkApi
 @RestController
 @ConditionalOnStarterRestApi
-@RequestMapping(path = "/api/lark/ops", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/lark/ops", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OpsAlertController {
 
     private final OpsAlertService opsAlertService;

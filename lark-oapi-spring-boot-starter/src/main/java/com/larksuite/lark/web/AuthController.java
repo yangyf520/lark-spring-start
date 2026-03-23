@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @LarkApi
 @RestController
 @ConditionalOnStarterRestApi
-@RequestMapping(path = "/api/lark/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/lark/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthController {
 
     private final AuthService authService;

@@ -94,7 +94,7 @@ public class OpenApiConfig {
     public GroupedOpenApi allApis() {
         return GroupedOpenApi.builder()
                 .group("all")
-                .pathsToMatch("/api/**")
+                .pathsToMatch("/admin/**", "/lark/**")
                 .build();
     }
 
@@ -102,7 +102,7 @@ public class OpenApiConfig {
     public GroupedOpenApi adminApis() {
         return GroupedOpenApi.builder()
                 .group("admin")
-                .pathsToMatch("/api/admin/**")
+                .pathsToMatch("/admin/**")
                 .build();
     }
 
@@ -110,7 +110,7 @@ public class OpenApiConfig {
     public GroupedOpenApi larkApis() {
         return GroupedOpenApi.builder()
                 .group("lark")
-                .pathsToMatch("/api/lark/**")
+                .pathsToMatch("/lark/**")
                 .build();
     }
 }

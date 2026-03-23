@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @LarkApi
 @RestController
 @ConditionalOnStarterRestApi
-@RequestMapping(path = "/api/lark/bitable", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/lark/bitable", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BitableController {
 
     private final BitableService bitableService;

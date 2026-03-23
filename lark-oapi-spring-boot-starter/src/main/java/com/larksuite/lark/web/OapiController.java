@@ -18,7 +18,7 @@ import java.util.Map;
 @LarkApi
 @RestController
 @ConditionalOnStarterRestApi
-@RequestMapping(path = "/api/lark/oapi", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/lark/oapi", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OapiController {
 
     private final OapiClientRegistry clientRegistry;

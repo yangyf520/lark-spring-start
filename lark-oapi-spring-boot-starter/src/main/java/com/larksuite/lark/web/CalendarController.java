@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @LarkApi
 @RestController
 @ConditionalOnStarterRestApi
-@RequestMapping(path = "/api/lark/calendar", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/lark/calendar", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CalendarController {
 
     private final CalendarService calendarService;

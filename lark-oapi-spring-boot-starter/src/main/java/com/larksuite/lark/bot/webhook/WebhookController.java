@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 /** 飞书事件 HTTP 回调：验签解密后交给 SDK {@link com.lark.oapi.event.EventDispatcher}。 */
 @RestController
 @ConditionalOnStarterWebhook
-@RequestMapping(path = "/api/lark", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/lark", produces = MediaType.APPLICATION_JSON_VALUE)
 public class WebhookController {
 
     private final OapiEventDispatcherRegistry dispatcherRegistry;

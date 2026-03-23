@@ -20,7 +20,7 @@ public class OapiWebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(loggingInterceptor)
-                .addPathPatterns("/api/lark/**")
-                .excludePathPatterns("/api/lark/webhook", "/api/lark/webhook/**");
+                .addPathPatterns("/lark/**")
+                .excludePathPatterns("/lark/webhook", "/lark/webhook/**");
     }
 }

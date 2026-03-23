@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @LarkApi
 @RestController
 @ConditionalOnStarterRestApi
-@RequestMapping(path = "/api/lark/contact", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/lark/contact", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ContactController {
 
     private final ContactService contactService;

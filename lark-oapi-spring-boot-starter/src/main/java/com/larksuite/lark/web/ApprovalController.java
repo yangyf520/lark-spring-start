@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @LarkApi
 @RestController
 @ConditionalOnStarterRestApi
-@RequestMapping(path = "/api/lark/approval", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/lark/approval", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ApprovalController {
 
     private final ApprovalService approvalService;

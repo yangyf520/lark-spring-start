@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @LarkApi
 @RestController
 @ConditionalOnStarterRestApi
-@RequestMapping(path = "/api/lark/im", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/lark/im", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ImMessageController {
 
     private final ImMessageService im;

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @LarkApi
 @RestController
 @ConditionalOnStarterRestApi
-@RequestMapping(path = "/api/lark/chat", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/lark/chat", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ChatController {
 
     private final ChatService chatService;

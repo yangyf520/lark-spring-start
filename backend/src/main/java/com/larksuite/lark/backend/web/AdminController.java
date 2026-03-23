@@ -11,7 +11,7 @@ import java.util.Map;
 
 /** 本机运维：健康与 tenant token 是否拉取成功。 */
 @RestController
-@RequestMapping(path = "/api/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminController {
 
     private final TenantAccessTokenProvider tokenProvider;
