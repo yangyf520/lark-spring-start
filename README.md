@@ -5,7 +5,7 @@
 ## 功能概览
 
 - **多应用配置**：通过 `lark.oapi.apps` 管理多个飞书应用（`app-id` / `app-secret` 等）。
-- **统一 REST**：`/api/lark/**` 下提供鉴权、通讯录、IM、审批、日历、机器人等代理接口。
+- **统一 REST**：`/api/lark/**` 下提供鉴权、通讯录、IM、审批、日历、机器人、多维表格（Bitable 元数据）等代理接口。
 - **事件回调**：`POST /api/lark/webhook`（及带 `appKey` 的路径）交由 SDK `EventDispatcher` 处理验签/解密（业务处理器需自行注册）。
 - **本地运维**：`/api/admin/health`、Swagger UI、可选 Actuator。
 

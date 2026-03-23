@@ -8,6 +8,7 @@ import com.larksuite.lark.oapi.spring.OapiProperties;
 import com.larksuite.lark.oapi.spring.StarterApiProperties;
 import com.larksuite.lark.service.approval.ApprovalService;
 import com.larksuite.lark.service.auth.AuthService;
+import com.larksuite.lark.service.bitable.BitableService;
 import com.larksuite.lark.service.bot.BotService;
 import com.larksuite.lark.service.calendar.CalendarService;
 import com.larksuite.lark.service.chat.ChatService;
@@ -92,5 +93,11 @@ public class CommonAutoConfiguration {
     @ConditionalOnMissingBean
     public BotService botService(OapiClientRegistry registry, ApiExecutor executor, ObjectMapper objectMapper) {
         return new BotService(registry, executor, objectMapper);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public BitableService bitableService(OapiClientRegistry registry, ApiExecutor executor) {
+        return new BitableService(registry, executor);
     }
 }
