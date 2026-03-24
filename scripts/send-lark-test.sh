@@ -91,11 +91,14 @@ curl -sS 'http://127.0.0.1:8080/api/lark/bot/info?appKey=default'
 # 智能表格（Bitable）
 # =============================================================================
 
-# --- GET /api/lark/bitable/apps/{appToken} ---
-# 功能：读取智能表格应用元数据（appToken 为多维表格 app_token，不是应用 app_id）。
-# 参数（path）：appToken。
-# 参数（query）：appKey 可选。
-curl -sS 'http://127.0.0.1:8080/api/lark/bitable/apps/bascnxxxxxxxxxxxx?appKey=default'
+# --- POST /api/lark/bitable/apps/{appToken}/tables/{tableId}/records/search ---
+# 功能：查询智能表格记录（支持按条件筛选、排序、字段裁剪与分页）。
+# 参数（path）：appToken、tableId。
+# 参数（query）：appKey、userIdType、pageToken、pageSize（均可选）。
+# 参数（JSON）：view_id、field_names、sort、filter、automatic_fields。
+curl -sS -X POST 'http://127.0.0.1:8080/api/lark/bitable/apps/bascnxxxxxxxxxxxx/tables/tblxxxxxxxxxxxx/records/search?appKey=default&pageSize=20' \
+  -H 'Content-Type: application/json; charset=utf-8' \
+  -d '{}'
 
 # =============================================================================
 # 通讯录
@@ -107,11 +110,69 @@ curl -sS 'http://127.0.0.1:8080/api/lark/bitable/apps/bascnxxxxxxxxxxxx?appKey=d
 # 参数（query）：appKey 可选；userIdType 默认 open_id（可选 open_id|user_id|union_id）；departmentIdType 默认 open_department_id。
 curl -sS 'http://127.0.0.1:8080/api/lark/contact/users/ou_xxx?userIdType=open_id&departmentIdType=open_department_id&appKey=default'
 
+# --- GET /api/lark/contact/users ---
+# 功能：分页列出部门下用户。
+# 参数（query）：appKey；departmentId 默认 0；pageSize 默认 20；pageToken 翻页；userIdType 默认 open_id；departmentIdType 默认 open_department_id。
+curl -sS 'http://127.0.0.1:8080/api/lark/contact/users?appKey=default&departmentId=0&pageSize=20&userIdType=open_id&departmentIdType=open_department_id'
+
+# --- POST /api/lark/contact/users ---
+# 功能：创建用户。
+# 参数（query）：appKey；userIdType 默认 open_id；departmentIdType 默认 open_department_id；clientToken 可选（幂等）。
+# 参数（JSON）：飞书创建用户必填含 department_ids（主部门 open_department_id 列表）、employee_type（如 1=正式员工）；
+#   与 departmentIdType 一致；starter 已支持 snake_case / camelCase。
+curl -sS -X POST 'http://127.0.0.1:8080/api/lark/contact/users?appKey=default&userIdType=open_id&departmentIdType=open_department_id' \
+  -H 'Content-Type: application/json; charset=utf-8' \
+  -d '{"name":"测试用户A","mobile":"13800000000","department_ids":["od-xxxxxxxx"],"employee_type":1}'
+
+# --- PUT /api/lark/contact/users/{userId} ---
+# 功能：更新用户信息。
+# 参数（path）：userId（与 userIdType 一致）。
+# 参数（query）：appKey；userIdType 默认 open_id；departmentIdType 默认 open_department_id。
+# 参数（JSON）：飞书 User 对象，按需传更新字段。
+curl -sS -X PUT 'http://127.0.0.1:8080/api/lark/contact/users/ou_xxx?appKey=default&userIdType=open_id&departmentIdType=open_department_id' \
+  -H 'Content-Type: application/json; charset=utf-8' \
+  -d '{"name":"测试用户A-已更新"}'
+
+# --- DELETE /api/lark/contact/users/{userId} ---
+# 功能：删除用户。
+# 参数（path）：userId（与 userIdType 一致）。
+# 参数（query）：appKey；userIdType 默认 open_id。
+curl -sS -X DELETE 'http://127.0.0.1:8080/api/lark/contact/users/ou_xxx?appKey=default&userIdType=open_id'
+
 # --- GET /api/lark/contact/departments ---
 # 功能：分页列出指定父部门下子部门。
 # 参数（query）：appKey；parentDepartmentId 默认 0；fetchChild 默认 false；pageSize 默认 20；pageToken 翻页；
 #   userIdType 默认 open_id；departmentIdType 默认 open_department_id。
 curl -sS 'http://127.0.0.1:8080/api/lark/contact/departments?appKey=default&parentDepartmentId=0&fetchChild=false&pageSize=20&userIdType=open_id&departmentIdType=open_department_id'
+
+# --- GET /api/lark/contact/departments/{departmentId} ---
+# 功能：按部门 ID 查询部门详情。
+# 参数（path）：departmentId（与 departmentIdType 一致）。
+# 参数（query）：appKey；userIdType 默认 open_id；departmentIdType 默认 open_department_id。
+curl -sS 'http://127.0.0.1:8080/api/lark/contact/departments/od-xxxxxxxx?appKey=default&userIdType=open_id&departmentIdType=open_department_id'
+
+# --- POST /api/lark/contact/departments ---
+# 功能：创建部门。
+# 参数（query）：appKey；userIdType 默认 open_id；departmentIdType 默认 open_department_id；clientToken 可选（幂等）。
+# 参数（JSON）：与飞书文档一致可用 snake_case（如 parent_department_id）；starter 已注册 Jackson mixin，亦支持 camelCase。
+curl -sS -X POST 'http://127.0.0.1:8080/api/lark/contact/departments?appKey=default&userIdType=open_id&departmentIdType=open_department_id' \
+  -H 'Content-Type: application/json; charset=utf-8' \
+  -d '{"name":"测试部门A","parent_department_id":"0"}'
+
+# --- PUT /api/lark/contact/departments/{departmentId} ---
+# 功能：更新部门信息。
+# 参数（path）：departmentId（与 departmentIdType 一致）。
+# 参数（query）：appKey；userIdType 默认 open_id；departmentIdType 默认 open_department_id。
+# 参数（JSON）：飞书 Department 对象，按需传更新字段。
+curl -sS -X PUT 'http://127.0.0.1:8080/api/lark/contact/departments/od-xxxxxxxx?appKey=default&userIdType=open_id&departmentIdType=open_department_id' \
+  -H 'Content-Type: application/json; charset=utf-8' \
+  -d '{"name":"测试部门A-已更新"}'
+
+# --- DELETE /api/lark/contact/departments/{departmentId} ---
+# 功能：删除部门。
+# 参数（path）：departmentId（与 departmentIdType 一致）。
+# 参数（query）：appKey；departmentIdType 默认 open_department_id。
+curl -sS -X DELETE 'http://127.0.0.1:8080/api/lark/contact/departments/od-xxxxxxxx?appKey=default&departmentIdType=open_department_id'
 
 # --- POST /api/lark/contact/users/batch-get-id ---
 # 功能：通过邮箱/手机号批量解析用户 ID（返回类型由 userIdType 决定，如 open_id、user_id）。

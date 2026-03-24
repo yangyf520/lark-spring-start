@@ -45,10 +45,14 @@ public final class OapiClientFactory {
     }
 
     private static BaseUrlEnum toSdkBaseUrl(OapiProperties.BaseUrl baseUrl) {
-        return switch (baseUrl) {
-            case FEISHU -> BaseUrlEnum.FeiShu;
-            case LARK_SUITE -> BaseUrlEnum.LarkSuite;
-        };
+        // Avoid switch-on-enum: javac emits synthetic OapiClientFactory$1; stale incremental jars can omit it.
+        if (baseUrl == OapiProperties.BaseUrl.FEISHU) {
+            return BaseUrlEnum.FeiShu;
+        }
+        if (baseUrl == OapiProperties.BaseUrl.LARK_SUITE) {
+            return BaseUrlEnum.LarkSuite;
+        }
+        throw new IllegalArgumentException("Unknown baseUrl: " + baseUrl);
     }
 }
 

@@ -3,6 +3,9 @@ package com.larksuite.lark.service.bitable;
 import com.lark.oapi.Client;
 import com.lark.oapi.service.bitable.v1.model.GetAppReq;
 import com.lark.oapi.service.bitable.v1.model.GetAppResp;
+import com.lark.oapi.service.bitable.v1.model.SearchAppTableRecordReq;
+import com.lark.oapi.service.bitable.v1.model.SearchAppTableRecordReqBody;
+import com.lark.oapi.service.bitable.v1.model.SearchAppTableRecordResp;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import com.larksuite.lark.support.ApiExecutor;
 
@@ -28,6 +31,28 @@ public class BitableService {
                 .appToken(appToken)
                 .build();
         return executor.execute(() -> client.bitable().v1().app().get(req));
+    }
+
+    /** POST /open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records/search */
+    public SearchAppTableRecordResp searchRecords(
+            String appKey,
+            String appToken,
+            String tableId,
+            String userIdType,
+            String pageToken,
+            Integer pageSize,
+            SearchAppTableRecordReqBody body
+    ) throws Exception {
+        Client client = resolveClient(appKey);
+        SearchAppTableRecordReq req = SearchAppTableRecordReq.newBuilder()
+                .appToken(appToken)
+                .tableId(tableId)
+                .userIdType(userIdType)
+                .pageToken(pageToken)
+                .pageSize(pageSize)
+                .searchAppTableRecordReqBody(body)
+                .build();
+        return executor.execute(() -> client.bitable().v1().appTableRecord().search(req));
     }
 
     private Client resolveClient(String appKey) {

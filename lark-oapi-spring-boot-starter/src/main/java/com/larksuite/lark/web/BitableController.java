@@ -1,12 +1,16 @@
 package com.larksuite.lark.web;
 
 import com.lark.oapi.service.bitable.v1.model.GetAppResp;
+import com.lark.oapi.service.bitable.v1.model.SearchAppTableRecordReqBody;
+import com.lark.oapi.service.bitable.v1.model.SearchAppTableRecordResp;
 import com.larksuite.lark.core.common.LarkApi;
 import com.larksuite.lark.service.bitable.BitableService;
 import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,5 +43,21 @@ public class BitableController {
             @RequestParam(required = false) String appKey
     ) throws Exception {
         return bitableService.getApp(appKey, appToken);
+    }
+
+    /**
+     * 查询多维表格记录：支持按视图、筛选条件、排序与分页查询数据表记录。
+     */
+    @PostMapping(path = "/apps/{appToken}/tables/{tableId}/records/search", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public SearchAppTableRecordResp searchRecords(
+            @PathVariable String appToken,
+            @PathVariable String tableId,
+            @RequestParam(required = false) String appKey,
+            @RequestParam(required = false) String userIdType,
+            @RequestParam(required = false) String pageToken,
+            @RequestParam(required = false) Integer pageSize,
+            @RequestBody(required = false) SearchAppTableRecordReqBody body
+    ) throws Exception {
+        return bitableService.searchRecords(appKey, appToken, tableId, userIdType, pageToken, pageSize, body);
     }
 }

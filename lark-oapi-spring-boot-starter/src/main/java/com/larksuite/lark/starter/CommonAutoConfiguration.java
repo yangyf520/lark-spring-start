@@ -1,7 +1,11 @@
 package com.larksuite.lark.starter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lark.oapi.service.contact.v3.model.Department;
+import com.lark.oapi.service.contact.v3.model.User;
 import com.larksuite.lark.core.token.TenantAccessTokenProvider;
+import com.larksuite.lark.jackson.DepartmentJsonMixin;
+import com.larksuite.lark.jackson.UserJsonMixin;
 import com.larksuite.lark.im.ImMessageService;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import com.larksuite.lark.oapi.spring.OapiProperties;
@@ -19,6 +23,7 @@ import com.larksuite.lark.support.ApiExecutor;
 import com.larksuite.lark.support.ClientProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
@@ -28,6 +33,20 @@ import java.time.Duration;
 @AutoConfiguration
 @EnableConfigurationProperties({OapiProperties.class, StarterApiProperties.class, ClientProperties.class})
 public class CommonAutoConfiguration {
+
+    /**
+     * SDK contact models use Gson {@code SerializedName}; REST bodies need Jackson aliases so
+     * Feishu snake_case (e.g. {@code parent_department_id}) deserializes like camelCase.
+     */
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer larkSdkDepartmentJsonAliases() {
+        return builder -> builder.mixIn(Department.class, DepartmentJsonMixin.class);
+    }
+
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer larkSdkUserJsonAliases() {
+        return builder -> builder.mixIn(User.class, UserJsonMixin.class);
+    }
 
     @Bean
     @ConditionalOnMissingBean
