@@ -21,11 +21,11 @@ public final class OapiClientFactory {
 
         Client.Builder builder = Client.newBuilder(app.getAppId(), app.getAppSecret());
 
-        if (app.isMarketplaceApp()) {
+        if (Boolean.TRUE.equals(app.getMarketplaceApp())) {
             builder.marketplaceApp();
         }
 
-        if (app.getBaseUrl() != null) {
+        if (app.getBaseUrl() != null && !app.getBaseUrl().isBlank()) {
             builder.openBaseUrl(toSdkBaseUrl(app.getBaseUrl()));
         }
 
@@ -37,22 +37,22 @@ public final class OapiClientFactory {
             builder.requestTimeout(app.getRequestTimeoutMs(), TimeUnit.MILLISECONDS);
         }
 
-        if (app.isDisableTokenCache()) {
+        if (Boolean.TRUE.equals(app.getDisableTokenCache())) {
             builder.disableTokenCache();
         }
 
         return builder.build();
     }
 
-    private static BaseUrlEnum toSdkBaseUrl(OapiProperties.BaseUrl baseUrl) {
-        // Avoid switch-on-enum: javac emits synthetic OapiClientFactory$1; stale incremental jars can omit it.
-        if (baseUrl == OapiProperties.BaseUrl.FEISHU) {
+    private static BaseUrlEnum toSdkBaseUrl(String baseUrl) {
+        String v = baseUrl == null ? "" : baseUrl.trim().toLowerCase();
+        if (v.contains("open.feishu.cn")) {
             return BaseUrlEnum.FeiShu;
         }
-        if (baseUrl == OapiProperties.BaseUrl.LARK_SUITE) {
+        if (v.contains("open.larksuite.com")) {
             return BaseUrlEnum.LarkSuite;
         }
-        throw new IllegalArgumentException("Unknown baseUrl: " + baseUrl);
+        throw new IllegalArgumentException("Unsupported lark.open.base-url: " + baseUrl);
     }
 }
 

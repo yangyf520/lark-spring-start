@@ -21,7 +21,7 @@ public class OapiEventDispatcherRegistry {
     public EventDispatcher get(String appKey) {
         EventDispatcher dispatcher = dispatchersByKey.get(appKey);
         if (dispatcher == null) {
-            throw new IllegalArgumentException("Unknown lark.oapi app key: " + appKey);
+            throw new IllegalArgumentException("Unknown lark.open app key: " + appKey);
         }
         return dispatcher;
     }

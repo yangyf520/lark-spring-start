@@ -24,28 +24,36 @@ management:
 logging:
   level:
     com.lark.oapi.core.Transport: DEBUG
+    com.larksuite.lark.app.openapi.AppOpenApiClient: DEBUG
 
 lark:
-  # api:
-  #   enabled: true       # 总开关：false 时不注册 starter 的 REST 与 Webhook
-  #   rest:
-  #     enabled: true     # /lark/** JSON API（@LarkApi、统一响应、DEBUG 拦截器）
-  #   webhook:
-  #     enabled: true     # POST /lark/webhook（事件订阅回调）
-  oapi:
-    primary: default
+  open:
+    base-url: https://open.feishu.cn
+    marketplace-app: false
+    verification-token: ${VERIFICATION_TOKEN:}
+    encrypt-key: ${ENCRYPT_KEY:}
+    request-timeout-ms: 30000
+    log-req-at-debug: true
+    disable-token-cache: false
     apps:
       default:
         app-id: ${APP_ID:}
         app-secret: ${APP_SECRET:}
-        base-url: FEISHU # or LARK_SUITE
-        marketplace-app: false
-        verification-token: ${VERIFICATION_TOKEN:}
-        encrypt-key: ${ENCRYPT_KEY:}
-        request-timeout-ms: 30000
-        log-req-at-debug: true
-        disable-token-cache: false
       # another:
       #   app-id: ${APP2_ID:}
       #   app-secret: ${APP2_SECRET:}
-      #   base-url: LARK_SUITE
+
+  apass:
+    base-url: https://ae-openapi.feishu.cn
+    apps:
+      default:
+        # Support both new and old env var names.
+        id: ${OPENAPI_ID:${OPENAPI_CLIENT_ID:}}
+        secret: ${OPENAPI_SECRET:${OPENAPI_CLIENT_SECRET:}}
+        # Optional: pre-issued Authorization token (e.g. "T:xxxx"). If set, backend will skip /auth/v1/appToken.
+        token: ${OPENAPI_TOKEN:}
+        namespace: ${OPENAPI_NAMESPACE:}
+      # another:
+      #   id: ${OPENAPI2_ID:}
+      #   secret: ${OPENAPI2_SECRET:}
+      #   namespace: ${APP2_NAMESPACE:}

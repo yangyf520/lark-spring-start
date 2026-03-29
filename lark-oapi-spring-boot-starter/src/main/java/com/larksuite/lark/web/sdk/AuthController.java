@@ -1,4 +1,4 @@
-package com.larksuite.lark.web;
+package com.larksuite.lark.web.sdk;
 
 import com.lark.oapi.service.auth.v3.model.InternalTenantAccessTokenResp;
 import com.lark.oapi.service.authen.v1.model.CreateAccessTokenResp;

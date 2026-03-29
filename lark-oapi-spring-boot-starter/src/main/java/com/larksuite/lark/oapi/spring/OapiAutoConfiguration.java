@@ -24,7 +24,7 @@ public class OapiAutoConfiguration {
     public OapiClientRegistry oapiClientRegistry(OapiProperties props) {
         Map<String, Client> clients = new LinkedHashMap<>();
         for (Map.Entry<String, OapiProperties.App> e : props.getApps().entrySet()) {
-            clients.put(e.getKey(), OapiClientFactory.create(e.getValue()));
+            clients.put(e.getKey(), OapiClientFactory.create(withDefaults(props, e.getValue())));
         }
 
         String primary = props.getPrimary();
@@ -57,7 +57,7 @@ public class OapiAutoConfiguration {
         Map<String, EventDispatcher> dispatchers = new LinkedHashMap<>();
         for (Map.Entry<String, OapiProperties.App> e : props.getApps().entrySet()) {
             String appKey = e.getKey();
-            OapiProperties.App app = e.getValue();
+            OapiProperties.App app = withDefaults(props, e.getValue());
 
             String verificationToken = app.getVerificationToken() == null ? "" : app.getVerificationToken();
             String encryptKey = app.getEncryptKey() == null ? "" : app.getEncryptKey();
@@ -69,6 +69,34 @@ public class OapiAutoConfiguration {
             dispatchers.put(appKey, builder.build());
         }
         return new OapiEventDispatcherRegistry(dispatchers);
+    }
+
+    private static OapiProperties.App withDefaults(OapiProperties root, OapiProperties.App app) {
+        if (app == null) {
+            return null;
+        }
+        if (app.getBaseUrl() == null || app.getBaseUrl().isBlank()) {
+            app.setBaseUrl(root.getBaseUrl());
+        }
+        if (app.getMarketplaceApp() == null) {
+            app.setMarketplaceApp(root.getMarketplaceApp());
+        }
+        if (app.getVerificationToken() == null) {
+            app.setVerificationToken(root.getVerificationToken());
+        }
+        if (app.getEncryptKey() == null) {
+            app.setEncryptKey(root.getEncryptKey());
+        }
+        if (app.getRequestTimeoutMs() == null) {
+            app.setRequestTimeoutMs(root.getRequestTimeoutMs());
+        }
+        if (app.getLogReqAtDebug() == null) {
+            app.setLogReqAtDebug(root.getLogReqAtDebug());
+        }
+        if (app.getDisableTokenCache() == null) {
+            app.setDisableTokenCache(root.getDisableTokenCache());
+        }
+        return app;
     }
 }
 

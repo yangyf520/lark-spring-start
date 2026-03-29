@@ -1,4 +1,4 @@
-package com.larksuite.lark.web;
+package com.larksuite.lark.web.sdk;
 
 import com.lark.oapi.service.im.v1.model.CreateChatReqBody;
 import com.lark.oapi.service.im.v1.model.CreateChatResp;

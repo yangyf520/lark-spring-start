@@ -7,8 +7,44 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Validated
-@ConfigurationProperties(prefix = "lark.oapi")
+@ConfigurationProperties(prefix = "lark.open")
 public class OapiProperties {
+
+    /**
+     * Default OpenAPI base url.
+     * Typical values: {@code https://open.feishu.cn} or {@code https://open.larksuite.com}.
+     */
+    private String baseUrl = "https://open.feishu.cn";
+
+    /**
+     * Default whether this is an ISV marketplace app.
+     */
+    private Boolean marketplaceApp = false;
+
+    /**
+     * Default event subscription / callback verification token (optional).
+     */
+    private String verificationToken;
+
+    /**
+     * Default event subscription / callback encrypt key (optional).
+     */
+    private String encryptKey;
+
+    /**
+     * Default request timeout in milliseconds. Null means SDK default.
+     */
+    private Long requestTimeoutMs;
+
+    /**
+     * Default whether to log request/response in debug mode.
+     */
+    private Boolean logReqAtDebug;
+
+    /**
+     * Default disable SDK's automatic tenant access token fetch & cache.
+     */
+    private Boolean disableTokenCache = false;
 
     /**
      * Which app key should be considered "primary".
@@ -37,6 +73,62 @@ public class OapiProperties {
         this.apps = apps;
     }
 
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public Boolean getMarketplaceApp() {
+        return marketplaceApp;
+    }
+
+    public void setMarketplaceApp(Boolean marketplaceApp) {
+        this.marketplaceApp = marketplaceApp;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public String getEncryptKey() {
+        return encryptKey;
+    }
+
+    public void setEncryptKey(String encryptKey) {
+        this.encryptKey = encryptKey;
+    }
+
+    public Long getRequestTimeoutMs() {
+        return requestTimeoutMs;
+    }
+
+    public void setRequestTimeoutMs(Long requestTimeoutMs) {
+        this.requestTimeoutMs = requestTimeoutMs;
+    }
+
+    public Boolean getLogReqAtDebug() {
+        return logReqAtDebug;
+    }
+
+    public void setLogReqAtDebug(Boolean logReqAtDebug) {
+        this.logReqAtDebug = logReqAtDebug;
+    }
+
+    public Boolean getDisableTokenCache() {
+        return disableTokenCache;
+    }
+
+    public void setDisableTokenCache(Boolean disableTokenCache) {
+        this.disableTokenCache = disableTokenCache;
+    }
+
     public static class App {
         private String appId;
         private String appSecret;
@@ -54,12 +146,12 @@ public class OapiProperties {
         /**
          * Whether this is an ISV marketplace app.
          */
-        private boolean marketplaceApp;
+        private Boolean marketplaceApp;
 
         /**
-         * FEISHU or LARK_SUITE.
+         * OpenAPI base url override. If blank, use {@code lark.open.base-url}.
          */
-        private BaseUrl baseUrl = BaseUrl.FEISHU;
+        private String baseUrl;
 
         /**
          * Request timeout in milliseconds. Null means SDK default.
@@ -75,7 +167,7 @@ public class OapiProperties {
          * Disable SDK's automatic tenant access token fetch & cache.
          * When enabled, callers should pass token via RequestOptions.tenantAccessToken(...).
          */
-        private boolean disableTokenCache;
+        private Boolean disableTokenCache;
 
         public String getAppId() {
             return appId;
@@ -109,19 +201,19 @@ public class OapiProperties {
             this.encryptKey = encryptKey;
         }
 
-        public boolean isMarketplaceApp() {
+        public Boolean getMarketplaceApp() {
             return marketplaceApp;
         }
 
-        public void setMarketplaceApp(boolean marketplaceApp) {
+        public void setMarketplaceApp(Boolean marketplaceApp) {
             this.marketplaceApp = marketplaceApp;
         }
 
-        public BaseUrl getBaseUrl() {
+        public String getBaseUrl() {
             return baseUrl;
         }
 
-        public void setBaseUrl(BaseUrl baseUrl) {
+        public void setBaseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
         }
 
@@ -141,18 +233,13 @@ public class OapiProperties {
             this.logReqAtDebug = logReqAtDebug;
         }
 
-        public boolean isDisableTokenCache() {
+        public Boolean getDisableTokenCache() {
             return disableTokenCache;
         }
 
-        public void setDisableTokenCache(boolean disableTokenCache) {
+        public void setDisableTokenCache(Boolean disableTokenCache) {
             this.disableTokenCache = disableTokenCache;
         }
-    }
-
-    public enum BaseUrl {
-        FEISHU,
-        LARK_SUITE
     }
 }
 

@@ -23,7 +23,7 @@ public class OapiClientRegistry {
     public Client get(String appKey) {
         Client client = clientsByKey.get(appKey);
         if (client == null) {
-            throw new IllegalArgumentException("Unknown lark.oapi app key: " + appKey);
+            throw new IllegalArgumentException("Unknown lark.open app key: " + appKey);
         }
         return client;
     }
@@ -34,7 +34,7 @@ public class OapiClientRegistry {
 
     public Client primary() {
         if (primaryKey == null || primaryKey.isBlank()) {
-            throw new IllegalStateException("No primary app configured (set lark.oapi.primary)");
+            throw new IllegalStateException("No primary app configured (set lark.open.primary)");
         }
         return get(primaryKey);
     }

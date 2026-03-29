@@ -1,10 +1,10 @@
-package com.larksuite.lark.web;
+package com.larksuite.lark.web.sdk;
 
 import com.lark.oapi.service.im.v1.enums.ReceiveIdTypeEnum;
 import com.lark.oapi.service.im.v1.model.CreateMessageResp;
 import com.lark.oapi.service.im.v1.model.UpdateMessageResp;
 import com.larksuite.lark.core.common.LarkApi;
-import com.larksuite.lark.im.ImMessageService;
+import com.larksuite.lark.service.message.ImMessageService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

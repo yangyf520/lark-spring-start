@@ -1,4 +1,4 @@
-package com.larksuite.lark.web;
+package com.larksuite.lark.web.sdk;
 
 import com.lark.oapi.service.approval.v4.model.CreateInstanceResp;
 import com.lark.oapi.service.approval.v4.model.GetApprovalResp;

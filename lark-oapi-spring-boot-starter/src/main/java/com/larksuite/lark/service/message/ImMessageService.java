@@ -1,4 +1,4 @@
-package com.larksuite.lark.im;
+package com.larksuite.lark.service.message;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lark.oapi.Client;

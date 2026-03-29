@@ -3,10 +3,16 @@ package com.larksuite.lark.starter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lark.oapi.service.contact.v3.model.Department;
 import com.lark.oapi.service.contact.v3.model.User;
+import com.larksuite.lark.app.service.DepartmentService;
+import com.larksuite.lark.app.service.ObjectDataService;
+import com.larksuite.lark.app.service.ObjectMetadataService;
+import com.larksuite.lark.app.service.UserService;
+import com.larksuite.lark.app.openapi.AppOpenApiClientRegistry;
+import com.larksuite.lark.app.openapi.AppOpenApiProperties;
 import com.larksuite.lark.core.token.TenantAccessTokenProvider;
 import com.larksuite.lark.jackson.DepartmentJsonMixin;
 import com.larksuite.lark.jackson.UserJsonMixin;
-import com.larksuite.lark.im.ImMessageService;
+import com.larksuite.lark.service.message.ImMessageService;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import com.larksuite.lark.oapi.spring.OapiProperties;
 import com.larksuite.lark.oapi.spring.StarterApiProperties;
@@ -31,7 +37,12 @@ import java.net.http.HttpClient;
 import java.time.Duration;
 
 @AutoConfiguration
-@EnableConfigurationProperties({OapiProperties.class, StarterApiProperties.class, ClientProperties.class})
+@EnableConfigurationProperties({
+        OapiProperties.class,
+        StarterApiProperties.class,
+        ClientProperties.class,
+        AppOpenApiProperties.class
+})
 public class CommonAutoConfiguration {
 
     /**
@@ -118,5 +129,35 @@ public class CommonAutoConfiguration {
     @ConditionalOnMissingBean
     public BitableService bitableService(OapiClientRegistry registry, ApiExecutor executor) {
         return new BitableService(registry, executor);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public AppOpenApiClientRegistry appOpenApiClientRegistry(ObjectMapper objectMapper, AppOpenApiProperties properties) {
+        return new AppOpenApiClientRegistry(objectMapper, properties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DepartmentService departmentService(AppOpenApiClientRegistry registry) {
+        return new DepartmentService(registry);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ObjectMetadataService objectMetadataService(AppOpenApiClientRegistry registry) {
+        return new ObjectMetadataService(registry);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public UserService userService(AppOpenApiClientRegistry registry) {
+        return new UserService(registry);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ObjectDataService objectDataService(AppOpenApiClientRegistry registry) {
+        return new ObjectDataService(registry);
     }
 }

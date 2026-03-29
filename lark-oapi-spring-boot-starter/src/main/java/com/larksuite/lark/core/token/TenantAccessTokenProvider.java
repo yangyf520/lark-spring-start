@@ -111,14 +111,11 @@ public class TenantAccessTokenProvider {
     }
 
     private static String baseUrlFrom(OapiProperties.App app) {
-        OapiProperties.BaseUrl baseUrl = app.getBaseUrl();
-        if (baseUrl == null) {
+        String baseUrl = app.getBaseUrl();
+        if (baseUrl == null || baseUrl.isBlank()) {
             return "https://open.feishu.cn";
         }
-        return switch (baseUrl) {
-            case FEISHU -> "https://open.feishu.cn";
-            case LARK_SUITE -> "https://open.larksuite.com";
-        };
+        return baseUrl;
     }
 
     private record CachedToken(String token, Instant expiresAt) {

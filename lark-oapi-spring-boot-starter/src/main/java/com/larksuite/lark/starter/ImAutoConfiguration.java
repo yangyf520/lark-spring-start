@@ -2,7 +2,7 @@ package com.larksuite.lark.starter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lark.oapi.Client;
-import com.larksuite.lark.im.ImMessageService;
+import com.larksuite.lark.service.message.ImMessageService;
 import com.larksuite.lark.oapi.spring.OapiClientRegistry;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

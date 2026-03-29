@@ -1,4 +1,4 @@
-package com.larksuite.lark.web;
+package com.larksuite.lark.web.sdk;
 
 import com.larksuite.lark.core.common.LarkApi;
 import com.larksuite.lark.service.ops.OpsAlertService;
