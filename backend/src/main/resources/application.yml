@@ -27,7 +27,7 @@ logging:
     com.larksuite.lark.app.openapi.AppOpenApiClient: DEBUG
 
 lark:
-  open:
+  oapi:
     base-url: https://open.feishu.cn
     marketplace-app: false
     verification-token: ${VERIFICATION_TOKEN:}

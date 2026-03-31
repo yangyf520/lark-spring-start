@@ -14,7 +14,7 @@
 ```text
 sense-lark/
 ├── pom.xml                          # 父 POM（Java 17）
-├── lark-oapi-spring-boot-starter/   # 飞书 OAPI 封装与自动配置
+├── lark-oapi-spring-boot-starter/   # Lark Spring Boot Starter（自动配置）
 ├── backend/                         # 可运行的 Spring Boot 应用（依赖 starter）
 ├── .cursor/rules/                   # Cursor 编辑器规则（建议纳入 Git，统一团队 AI 提示）
 ├── scripts/                         # curl 冒烟脚本与 API 说明
@@ -91,6 +91,13 @@ CHAT_ID=oc_xxxxxxxx ./scripts/api-lark-smoke.sh
 ```
 
 脚本路径：`scripts/api-lark-smoke.sh`（内含各接口说明注释）。
+
+## 打包发布
+```bash
+cd /sense-lark
+cd lark-oapi-spring-boot-starter
+mvn -DskipTests deploy
+```
 
 ## 接口分组
 
