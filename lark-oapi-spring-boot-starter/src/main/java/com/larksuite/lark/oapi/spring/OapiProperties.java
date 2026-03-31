@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Validated
-@ConfigurationProperties(prefix = "lark.open")
+@ConfigurationProperties(prefix = "lark.oapi")
 public class OapiProperties {
 
     /**
@@ -149,7 +149,7 @@ public class OapiProperties {
         private Boolean marketplaceApp;
 
         /**
-         * OpenAPI base url override. If blank, use {@code lark.open.base-url}.
+         * OpenAPI base url override. If blank, use {@code lark.oapi.base-url}.
          */
         private String baseUrl;
 

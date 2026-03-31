@@ -52,7 +52,7 @@ public final class OapiClientFactory {
         if (v.contains("open.larksuite.com")) {
             return BaseUrlEnum.LarkSuite;
         }
-        throw new IllegalArgumentException("Unsupported lark.open.base-url: " + baseUrl);
+        throw new IllegalArgumentException("Unsupported lark.oapi.base-url: " + baseUrl);
     }
 }
 
