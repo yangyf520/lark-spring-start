@@ -231,6 +231,38 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/im/send-card' \
   -H 'Content-Type: application/json' \
   -d '{"appKey":"default","receiveIdType":"CHAT_ID","receiveId":"oc_xxx","cardJson":"{\"config\":{\"wide_screen_mode\":true},\"header\":{\"template\":\"red\",\"title\":{\"tag\":\"plain_text\",\"content\":\"【告警】示例卡片\"}},\"elements\":[{\"tag\":\"div\",\"text\":{\"tag\":\"lark_md\",\"content\":\"**级别**：P1\\n**摘要**：接口超时\"}}]}"}'
 
+# --- POST /api/lark/im/send-card（发给指定 user_id，卡片正文含 UTC 时间，每次执行不同）---
+# 功能：与上相同；receiveId 为通讯录 user_id（示例 3f64af1d，请按实际替换）。cardJson 由脚本生成，避免手写转义。
+# 依赖：本机有 python3。用 heredoc 而非 python3 -c，避免 bash 把 Python 里的反引号当成命令替换。无 python3 时可改用上一段固定 cardJson 的 curl。
+curl -sS -X POST 'http://127.0.0.1:8080/api/lark/im/send-card' \
+  -H 'Content-Type: application/json' \
+  -d "$(python3 <<'PY'
+import json, datetime
+uid = '3f64af1d'
+now = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+card = {
+    'config': {'wide_screen_mode': True},
+    'header': {'template': 'blue', 'title': {'tag': 'plain_text', 'content': '动态卡片'}},
+    'elements': [{
+        'tag': 'div',
+        'text': {
+            'tag': 'lark_md',
+            'content': '**生成时间（UTC）**：' + now + '\\n**接收 user_id**：' + uid + '\\n**说明**：每次执行本命令时间会更新；可把业务变量拼进 content。'
+        }
+    }]
+}
+body = {'appKey': 'default', 'receiveIdType': 'USER_ID', 'receiveId': uid, 'cardJson': json.dumps(card, ensure_ascii=False)}
+print(json.dumps(body, ensure_ascii=False))
+PY
+)"
+
+# --- POST /api/lark/im/send-card-template ---
+# 功能：发送飞书「消息卡片模板」（开放平台卡片搭建工具发布后的 template_id），无需手写整段 card JSON。
+# 参数（JSON）：appKey；receiveIdType；receiveId；templateId；templateVariable — 与模板内变量名一致（示例：open_id、complete_time、alarm_time、notes），无变量可传 {} 或省略。
+curl -sS -X POST 'http://127.0.0.1:8080/api/lark/im/send-card-template' \
+  -H 'Content-Type: application/json' \
+  -d '{"appKey":"default","receiveIdType":"USER_ID","receiveId":"3f64af1d","templateId":"AAqKFp7T1oLSK","templateVariable":{"open_id":"ou_xxx","complete_time":"2026-04-01 12:34:56","alarm_time":"2026-04-01 12:00:00","notes":"示例备注"}}'
+
 # --- POST /api/lark/im/update-message ---
 # 功能：按 message_id 更新已发送消息（类型需支持更新，如文本）。
 # 参数（JSON）：appKey 可选；messageId — 如 om_xxx；contentJson — 文本消息示例：{"text":"新内容"}。

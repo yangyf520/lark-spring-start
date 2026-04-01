@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /** 即时消息：以应用身份发文本 / 卡片、更新消息。 */
 @LarkApi
 @RestController
@@ -42,6 +44,19 @@ public class ImMessageController {
             @NotBlank String cardJson
     ) {}
 
+    /**
+     * 飞书消息卡片模板（开放平台搭建发布的 template_id），变量名与模板内定义一致。
+     *
+     * @param templateVariable 可为 null 或省略（无变量时发空对象）
+     */
+    public record SendCardTemplateReq(
+            String appKey,
+            @NotNull ReceiveIdTypeEnum receiveIdType,
+            @NotBlank String receiveId,
+            @NotBlank String templateId,
+            Map<String, Object> templateVariable
+    ) {}
+
     public record UpdateMessageReq(
             String appKey,
             @NotBlank String messageId,
@@ -58,6 +73,17 @@ public class ImMessageController {
     @PostMapping(path = "/send-card", consumes = MediaType.APPLICATION_JSON_VALUE)
     public CreateMessageResp sendCard(@Valid @RequestBody SendCardReq req) throws Exception {
         return im.sendCard(req.appKey(), req.receiveIdType(), req.receiveId(), req.cardJson());
+    }
+
+    /** 发送消息卡片模板：仅需 templateId + 变量，无需手写整段 card JSON。 */
+    @PostMapping(path = "/send-card-template", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CreateMessageResp sendCardTemplate(@Valid @RequestBody SendCardTemplateReq req) throws Exception {
+        return im.sendCardTemplate(
+                req.appKey(),
+                req.receiveIdType(),
+                req.receiveId(),
+                req.templateId(),
+                req.templateVariable());
     }
 
     /** 更新消息内容：按 messageId 更新已发送消息。 */
