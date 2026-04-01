@@ -1,13 +1,14 @@
 # =============================================================================
 # default OpenAPI（对象元数据 / 数据表 records）
 # =============================================================================
+# Content-Type：通常 `-H 'Content-Type: application/json'` 即可；若遇 415，用 `curl -v` 看实际发出的 Content-Type。
 
 # --- POST /api/lark/app/objects/batch-create ---
 # 功能：批量创建对象元数据（对象定义）。
 # 参数（JSON）：与 ae-openapi.feishu.cn 文档一致——对象/字段使用 api_name，label 为多语对象，字段 type 为嵌套结构。
 # （Starter 也会把旧示例里的 object_api_name / field_api_name / field_type / 字符串 label 规范成上述格式。）
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/objects/batch-create?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "objects": [
       {
@@ -44,7 +45,7 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/objects/batch-create?appKey
 # 勿对系统主键 _id 使用 add（对象已存在时易被拒）；新增业务字段才对自定义 api_name 用 add。
 # 若 HTTP 200 但 code=k_ec_000010「暂不支持此功能」，多为平台拒绝该操作（含错误 operator/字段组合或环境未开放），需对照凭证文档或服务台。
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/objects/batch-update?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "objects": [
       {
@@ -80,7 +81,7 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/objects/batch-update?appKey
 # 功能：单条创建记录（对应 ae-openapi …/objects/{api_name}/records）。{objectApiName} 换成任意业务对象 api_name，例如 enterprise_service_ticket。
 # 请求体与官方一致：{ "record": { …字段… } }；无需 Authorization，由 lark.apass.apps.<appKey> 换 appToken。
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/data/objects/enterprise_service_ticket/records/create?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "record": {
       "priority": "low",
@@ -102,7 +103,7 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/data/objects/enterprise_ser
 # --- DELETE /api/lark/app/data/objects/{objectApiName}/records/batch-delete ---
 # 功能：批量删除记录（对应 ae-openapi …/objects/{api_name}/records_batch，请求体含 ids）。
 curl -sS -X DELETE 'http://127.0.0.1:8080/api/lark/app/data/objects/enterprise_service_ticket/records/batch-delete?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "ids": ["100"]
   }'
@@ -110,7 +111,7 @@ curl -sS -X DELETE 'http://127.0.0.1:8080/api/lark/app/data/objects/enterprise_s
 # --- POST /api/lark/app/objects/batch-delete ---
 # 功能：批量删除对象元数据（对象定义）。
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/objects/batch-delete?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "object_api_names": ["_demo_object"]
   }'
@@ -118,7 +119,7 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/objects/batch-delete?appKey
 # --- POST /api/lark/app/data/objects/_department/records/batch-create ---
 # 功能：批量新增部门记录（数据表）。
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/data/objects/_department/records/batch-create?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "records": [
       { "fields": { "name": "研发部", "parent_id": "0" } }
@@ -128,7 +129,7 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/data/objects/_department/re
 # --- PATCH /api/lark/app/data/objects/_department/records/batch-update ---
 # 功能：批量更新部门记录（数据表）。
 curl -sS -X PATCH 'http://127.0.0.1:8080/api/lark/app/data/objects/_department/records/batch-update?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "records": [
       { "id": "recXXXXXXXXXXXX", "fields": { "name": "研发一部" } }
@@ -138,13 +139,13 @@ curl -sS -X PATCH 'http://127.0.0.1:8080/api/lark/app/data/objects/_department/r
 # --- DELETE /api/lark/app/data/objects/_department/records/batch-delete ---
 # 功能：批量删除部门记录（数据表）。
 curl -sS -X DELETE 'http://127.0.0.1:8080/api/lark/app/data/objects/_department/records/batch-delete?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{"ids":["recXXXXXXXXXXXX","recYYYYYYYYYYYY"]}'
 
 # --- POST /api/lark/app/data/objects/_department/records/query ---
 # 功能：查询部门记录（数据表）。
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/data/objects/_department/records/query?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "filter": {
       "conjunction": "and",
@@ -162,7 +163,7 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/data/objects/_department/re
 # 注意：低代码对象 _user 的字段 API 名多为下划线前缀（如 _email、_name），与 open_api 文档示例一致；
 # 传 email/name 会报「字段不存在」。
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/data/objects/_user/records/batch-create?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "records": [
       {
@@ -177,7 +178,7 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/data/objects/_user/records/
 # --- POST /api/lark/app/data/objects/_user/records/create ---
 # 功能：单条新增用户记录（数据表）。请求体为 { "record": { ... } }，与 AE OpenAPI /records 一致。
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/data/objects/_user/records/create?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "record": {
       "_email": "lisi@example.com",
@@ -188,7 +189,7 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/data/objects/_user/records/
 # --- PATCH /api/lark/app/data/objects/_user/records/batch-update ---
 # 功能：批量更新用户记录（数据表）。
 curl -sS -X PATCH 'http://127.0.0.1:8080/api/lark/app/data/objects/_user/records/batch-update?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "records": [
       {
@@ -201,13 +202,13 @@ curl -sS -X PATCH 'http://127.0.0.1:8080/api/lark/app/data/objects/_user/records
 # --- DELETE /api/lark/app/data/objects/_user/records/batch-delete ---
 # 功能：批量删除用户记录（数据表）。
 curl -sS -X DELETE 'http://127.0.0.1:8080/api/lark/app/data/objects/_user/records/batch-delete?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{"ids":["recXXXXXXXXXXXX","recYYYYYYYYYYYY"]}'
 
 # --- POST /api/lark/app/data/objects/_user/records/query ---
 # 功能：查询用户记录（数据表）。
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/app/data/objects/_user/records/query?appKey=default' \
-  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Content-Type: application/json' \
   -d '{
     "filter": {
       "conjunction": "and",

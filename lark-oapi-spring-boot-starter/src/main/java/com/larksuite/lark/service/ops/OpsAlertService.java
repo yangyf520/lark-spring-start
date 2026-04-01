@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
- * 运维告警：新建群并发送首条文本，或向已有群发送一条文本（成员 ID 与 {@link ChatService#createChat} 一致，为 open_id）。
+ * 运维告警：新建群并发送首条文本，或向已有群发送一条文本（成员 ID 类型由 {@code userIdType} 指定，默认 {@code open_id}）。
  */
 public class OpsAlertService {
 
@@ -50,7 +50,7 @@ public class OpsAlertService {
             if (req.botOpenIds() != null && !req.botOpenIds().isEmpty()) {
                 body.botIdList(req.botOpenIds().toArray(String[]::new));
             }
-            CreateChatResp createResp = chatService.createChat(req.appKey(), body.build());
+            CreateChatResp createResp = chatService.createChat(req.appKey(), body.build(), req.userIdType());
             if (!createResp.success() || createResp.getData() == null || createResp.getData().getChatId() == null) {
                 throw new IllegalStateException("create chat failed: " + createResp.getCode() + " " + createResp.getMsg());
             }
@@ -75,9 +75,12 @@ public class OpsAlertService {
             String appKey,
             String chatId,
             String chatName,
+            /** 成员用户 ID 列表，类型由 {@link #userIdType} 决定 */
             List<String> memberOpenIds,
             List<String> botOpenIds,
             String description,
+            /** 可选：{@code open_id}（默认）、{@code user_id}、{@code union_id} */
+            String userIdType,
             @NotBlank String alertText
     ) {}
 

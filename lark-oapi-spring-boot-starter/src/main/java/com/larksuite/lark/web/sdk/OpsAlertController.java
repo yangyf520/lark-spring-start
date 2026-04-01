@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 运维告警：一次请求「新建群并发首条消息」或「向已有群发一条消息」。
  * <p>
- * 建群时 {@code memberOpenIds} / {@code botOpenIds} 均为飞书 open_id；与 {@link com.larksuite.lark.service.chat.ChatService#createChat} 一致。
+ * 建群时 {@code memberOpenIds} 的类型由 {@code userIdType} 指定（默认 {@code open_id}）；{@code botOpenIds} 仍为机器人 open_id。
  */
 @LarkApi
 @RestController

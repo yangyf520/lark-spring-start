@@ -7,6 +7,7 @@ import com.larksuite.lark.core.common.LarkApi;
 import com.larksuite.lark.service.chat.ChatService;
 import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
 import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +30,33 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-    public record CreateChatReq(String appKey, @Valid CreateChatReqBody body) {}
+    /**
+     * @param userIdType 可选，与 {@code body.userIdType} 二选一；顶层优先
+     * @param body       建群字段 + 可选 {@code userIdType}（见 {@link CreateChatRestBody}）
+     */
+    public record CreateChatReq(String appKey, String userIdType, @Valid CreateChatRestBody body) {
+
+        /** 拷贝为 SDK body，不包含仅用于本接口的 {@code userIdType}。 */
+        public CreateChatReqBody resolvedSdkBody() {
+            if (body == null) {
+                return null;
+            }
+            CreateChatReqBody plain = new CreateChatReqBody();
+            BeanUtils.copyProperties(body, plain);
+            return plain;
+        }
+
+        /** 解析后的用户 ID 类型：顶层 {@code userIdType} 优先，否则用 {@code body.userIdType} */
+        public String effectiveUserIdType() {
+            if (userIdType != null && !userIdType.isBlank()) {
+                return userIdType;
+            }
+            if (body != null && body.getUserIdType() != null && !body.getUserIdType().isBlank()) {
+                return body.getUserIdType();
+            }
+            return null;
+        }
+    }
 
     /** 获取会话详情：按 chat_id 查询群会话信息。 */
     @GetMapping("/{chatId}")
@@ -40,9 +67,9 @@ public class ChatController {
     /** 创建群会话：创建一个新的群聊会话。 */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public CreateChatResp createChat(@Valid @RequestBody CreateChatReq req) throws Exception {
-        if (req.body() == null) {
+        if (req.body() == null || req.resolvedSdkBody() == null) {
             throw new IllegalArgumentException("body is required");
         }
-        return chatService.createChat(req.appKey(), req.body());
+        return chatService.createChat(req.appKey(), req.resolvedSdkBody(), req.effectiveUserIdType());
     }
 }
