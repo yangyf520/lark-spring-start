@@ -24,7 +24,7 @@
     </properties>
 
     <modules>
-        <module>lark-oapi-spring-boot-starter</module>
+        <module>lark-spring-boot-starter</module>
         <module>backend</module>
     </modules>
 

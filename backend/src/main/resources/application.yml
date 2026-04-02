@@ -24,17 +24,11 @@ management:
 logging:
   level:
     com.lark.oapi.core.Transport: DEBUG
-    com.larksuite.lark.app.openapi.AppOpenApiClient: DEBUG
+    com.larksuite.lark.app.core.openapi.AppOpenApiClient: DEBUG
 
 lark:
   oapi:
     base-url: https://open.feishu.cn
-    marketplace-app: false
-    verification-token: ${VERIFICATION_TOKEN:}
-    encrypt-key: ${ENCRYPT_KEY:}
-    request-timeout-ms: 30000
-    log-req-at-debug: true
-    disable-token-cache: false
     apps:
       default:
         app-id: ${APP_ID:}

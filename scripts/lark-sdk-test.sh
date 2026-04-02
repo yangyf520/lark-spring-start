@@ -23,11 +23,6 @@ curl -sSI 'http://127.0.0.1:8080/' | head -8
 # 运维与可观测
 # =============================================================================
 
-# --- GET /api/admin/health ---
-# 功能：本机运维健康检查；返回应用状态、时间及 tenant_access_token 是否已缓存（不含明文）。
-# 参数：无。
-curl -sS 'http://127.0.0.1:8080/api/admin/health'
-
 # --- GET /actuator/health ---
 # 功能：Spring Boot Actuator 健康检查（未引入或未暴露时请求会失败，已用 || true 忽略退出码）。
 # 参数：无。
@@ -41,11 +36,6 @@ curl -sS 'http://127.0.0.1:8080/actuator/health' || true
 # 功能：列出当前进程内已注册的飞书应用 appKey 与 primary 应用键。
 # 参数：无。
 curl -sS 'http://127.0.0.1:8080/api/lark/oapi/apps'
-
-# --- GET /api/lark/oapi/tenant-access-token ---
-# 功能：探测 primary 应用的租户 token 是否已在 SDK/缓存侧就绪（布尔，不返回 token 内容）。
-# 参数：无。
-curl -sS 'http://127.0.0.1:8080/api/lark/oapi/tenant-access-token'
 
 # --- GET /api/lark/oapi/check-app ---
 # 功能：校验给定 appKey 能否解析为可用的飞书 OpenAPI Client（配置是否存在）。
@@ -261,7 +251,7 @@ PY
 # 参数（JSON）：appKey；receiveIdType；receiveId；templateId；templateVariable — 与模板内变量名一致（示例：open_id、complete_time、alarm_time、notes），无变量可传 {} 或省略。
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/im/send-card-template' \
   -H 'Content-Type: application/json' \
-  -d '{"appKey":"default","receiveIdType":"USER_ID","receiveId":"3f64af1d","templateId":"AAqKFp7T1oLSK","templateVariable":{"open_id":"ou_xxx","complete_time":"2026-04-01 12:34:56","alarm_time":"2026-04-01 12:00:00","notes":"示例备注"}}'
+  -d '{"appKey":"default","receiveIdType":"USER_ID","receiveId":"gac5acc8","templateId":"AAqKFp7T1oLSK","templateVariable":{"open_id":"3f64af1d","complete_time":"2026-04-01 12:34:56","alarm_time":"2026-04-01 12:00:00","notes":"示例备注"}}'
 
 # --- POST /api/lark/im/update-message ---
 # 功能：按 message_id 更新已发送消息（类型需支持更新，如文本）。

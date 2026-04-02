@@ -7,14 +7,14 @@
 - **多应用配置**：通过 `lark.oapi.apps` 管理多个飞书应用（`app-id` / `app-secret` 等）。
 - **统一 REST**：`/api/lark/**` 下提供鉴权、通讯录、IM、审批、日历、机器人、多维表格（Bitable 元数据）等代理接口。
 - **事件回调**：`POST /api/lark/webhook`（及带 `appKey` 的路径）交由 SDK `EventDispatcher` 处理验签/解密（业务处理器需自行注册）。
-- **本地运维**：`/api/admin/health`、Swagger UI、可选 Actuator。
+- **本地运维**：Swagger UI、可选 Actuator。
 
 ## 工程结构（Maven 多模块）
 
 ```text
 sense-lark/
 ├── pom.xml                          # 父 POM（Java 17）
-├── lark-oapi-spring-boot-starter/   # Lark Spring Boot Starter（自动配置）
+├── lark-spring-boot-starter/   # Lark Spring Boot Starter（自动配置）
 ├── backend/                         # 可运行的 Spring Boot 应用（依赖 starter）
 ├── .cursor/rules/                   # Cursor 编辑器规则（建议纳入 Git，统一团队 AI 提示）
 ├── scripts/                         # curl 冒烟脚本与 API 说明
@@ -68,10 +68,8 @@ mvn spring-boot:run
 ## 配置说明要点
 
 - 主配置：`backend/src/main/resources/application.yml`（应用端口、`lark.oapi` 等）。
-- **Starter HTTP 开关**（前缀 `lark.api`，类 `StarterApiProperties`）：`enabled` 为总开关（`false` 时 REST 与事件回调均不注册）；在总开关为 `true` 时，可用 `rest.enabled` 单独关闭 `/api/lark/**` 下 JSON API（含 Advice、拦截器），用 `webhook.enabled` 单独关闭 `POST /api/lark/webhook`。默认三者均为 `true`。
 - **集成到其他 Spring Boot 应用**：POM 依赖本 starter 并配置 `lark.oapi` 即可启用 Client、多应用注册与（默认开启的）`/api/lark/**`、Webhook；**无需**在宿主 `@SpringBootApplication` 上写 `scanBasePackages` 包含 `com.larksuite.lark`。注意：宿主**不要**把组件扫描范围扩大到整个 `com.larksuite.lark`（例如启动类放在 `com.larksuite.lark` 根包且默认扫描），否则 starter 已自动注册的 Controller/Advice 会**重复定义**导致启动失败；宿主业务代码放在独立包（如 `com.acme.app`）即可。极个别情况下若宿主已有同名 Bean（如 `authService`），可用 `@Primary` 或自定义 `@Bean` 覆盖。
-- 本仓库示例后端：启动类在 `com.larksuite.lark.backend`，仅扫描该包及子包，与 starter 的 `com.larksuite.lark.web` 分离。
-- `TenantAccessTokenProvider` 使用内置 `HttpClient`，不再向容器注册名为 `httpClient` 的全局 Bean，避免与业务方冲突。
+- 本仓库示例后端：启动类在 `com.larksuite.lark.backend`，仅扫描该包及子包，与 starter 的 `com.larksuite.lark.sdk.controller` 等分离。
 - **SDK 调用重试**（`lark.client.retry-times` 等）：`ApiExecutor` 仅对 `IOException` / `HttpTimeoutException`（及 cause 链上的同类）重试，业务异常不会重试。
 - 敏感信息：放在 **`backend/.env`**（已被 `.gitignore` 忽略），勿提交仓库。
 - 飞书 SDK 请求日志：已对 `com.lark.oapi.core.Transport` 使用 DEBUG；生产环境请按需调低级别，避免泄露 token。
@@ -95,7 +93,7 @@ CHAT_ID=oc_xxxxxxxx ./scripts/api-lark-smoke.sh
 ## 打包发布
 ```bash
 cd /sense-lark
-cd lark-oapi-spring-boot-starter
+cd lark-spring-boot-starter
 mvn -DskipTests deploy
 ```
 
@@ -103,7 +101,6 @@ mvn -DskipTests deploy
 
 | 前缀 | 说明 |
 |------|------|
-| `/api/admin` | 本机管理（健康、TAT 探测） |
 | `/api/lark/oapi` | 多应用 Client 自检 |
 | `/api/lark/bot` | 机器人信息（飞书 `bot/v3/info`） |
 | `/api/lark/auth` | 租户/用户 token 换取 |

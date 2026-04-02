@@ -11,7 +11,7 @@ alwaysApply: true
   - 商店应用：`Client.newBuilder(appId, appSecret).marketplaceApp().build()`
   - 需要指定域名：`.openBaseUrl(BaseUrlEnum.FeiShu|LarkSuite)`
 - **Token 处理**：默认优先让 SDK **自动获取并缓存** TenantAccessToken。
-  - 只有在你要“自己维护 token（比如已有 `TenantAccessTokenProvider`）”时才 `disableTokenCache()`，并在每次调用用 `RequestOptions.tenantAccessToken(...)` 显式传入。
+- 只有在你要“自己维护 token”时才 `disableTokenCache()`，并在每次调用用 `RequestOptions.tenantAccessToken(...)` 显式传入。
 - **请求级别参数**：需要以用户身份调用时，用 `RequestOptions.userAccessToken(...)`；商店应用需要 `RequestOptions.tenantKey(...)`；自定义 header 也放在 `RequestOptions.headers(...)`。
 - **错误处理**：所有 SDK Resp 都先 `resp.success()`；失败统一记录 `code/msg/requestId` 并向上抛/返回（不要吞异常、不要只打印 body）。
 - **事件/回调**：能用 SDK 的 `EventDispatcher`/（如需接入 Spring Webhook）`oapi-sdk-servlet-ext` 就用它，避免自己实现验签/解密/重试协议。

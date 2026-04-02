@@ -1,7 +1,6 @@
 package com.larksuite.lark.backend.config;
 
-import com.larksuite.lark.core.common.LarkApi;
-import com.larksuite.lark.starter.condition.ConditionalOnStarterRestApi;
+import com.larksuite.lark.common.annotation.LarkApi;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.BooleanSchema;
@@ -26,18 +25,13 @@ public class OpenApiConfig {
                 .title("Sense Lark API")
                 .version("v1")
                 .description(
-                        "分组 **lark** 下接口：Controller 返回飞书 SDK 的 `*Resp`（`BaseResponse`），"
-                                + "由 `ApiResponseBodyAdvice` 转为统一 `ApiResponse`。"
-                                + "文档 200 中 **data** 对应 SDK 的 `data` 字段（业务载荷），而非整段 Resp。"
+                        "分组 **lark** 下接口：正常返回飞书 SDK 的 `*Resp`；异常时返回统一错误 envelope。"
+                                + "本页通过 SpringDoc 定制把 200 响应 schema 的 **data** 对齐到 SDK `data` 业务载荷。"
                 ));
     }
 
-    /**
-     * 将 SpringDoc 根据 Controller 方法推断出的「业务类型」schema 包进 {@code ApiResponse}，
-     * 避免文档只显示 data、与真实 HTTP JSON 不一致。
-     */
+    /** 仅 @LarkApi：将 200 的 JSON schema 包一层固定 envelope，文档里 data 对齐到 SDK `data` 业务载荷。 */
     @Bean
-    @ConditionalOnStarterRestApi
     public OperationCustomizer larkApiResponseEnvelopeCustomizer() {
         return (operation, handlerMethod) -> {
             if (!isLarkApi(handlerMethod)) {
@@ -79,7 +73,7 @@ public class OpenApiConfig {
         return handlerMethod.getBeanType().isAnnotationPresent(LarkApi.class);
     }
 
-    /** SpringDoc 对 SDK `*Resp` 生成的 schema 通常含 `data` 字段；与 Advice 写入 HTTP 的 `ApiResponse.data` 对齐。 */
+    /** 若内层 schema 已有 `data`，文档只展示业务载荷，与 SDK `data` 含义对齐。 */
     private static Schema<?> envelopeDataSchema(Schema<?> inner) {
         if (inner instanceof ObjectSchema os && os.getProperties() != null) {
             Schema<?> data = os.getProperties().get("data");

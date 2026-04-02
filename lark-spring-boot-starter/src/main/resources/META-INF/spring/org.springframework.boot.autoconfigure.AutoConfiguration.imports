@@ -1,0 +1,3 @@
+com.larksuite.lark.sdk.core.OapiAutoConfiguration
+com.larksuite.lark.starter.CommonAutoConfiguration
+com.larksuite.lark.starter.LarkRestWebAutoConfiguration
