@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 低代码自定义对象记录 API（与 /objects/_user、/objects/_department 并列）。
- * 路径变量为对象 api_name，请求体与 ae-openapi 文档一致。
+ * 低代码自定义对象记录 API（与 {@code _user}、{@code _department} 并列）。
+ * <p>
+ * 路径变量为对象 {@code api_name}，请求体与 AE API 文档一致。
  */
 @LarkApi
 @RestController
@@ -27,11 +28,23 @@ public class ObjectDataController {
 
     private final ObjectDataService objectDataService;
 
+    /**
+     * 构造注入。
+     * <p>
+     * @param objectDataService 对象实例数据服务
+     */
     public ObjectDataController(ObjectDataService objectDataService) {
         this.objectDataService = objectDataService;
     }
 
-    /** 批量新增记录。 */
+    /**
+     * 批量新增记录。
+     * <p>
+     * @param objectApiName 对象 api_name
+     * @param appKey        AE 应用键，可空（使用 primary）
+     * @param body          请求体 JSON
+     * @return AE API 响应 JSON
+     */
     @PostMapping(path = "/records/batch-create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode batchCreate(
             @PathVariable String objectApiName,
@@ -41,7 +54,14 @@ public class ObjectDataController {
         return objectDataService.batchCreate(appKey, objectApiName, body);
     }
 
-    /** 新增单条记录。 */
+    /**
+     * 单条新增记录。
+     * <p>
+     * @param objectApiName 对象 api_name
+     * @param appKey        AE 应用键，可空（使用 primary）
+     * @param body          请求体 JSON
+     * @return AE API 响应 JSON
+     */
     @PostMapping(path = "/records/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode createRecord(
             @PathVariable String objectApiName,
@@ -51,7 +71,14 @@ public class ObjectDataController {
         return objectDataService.createRecord(appKey, objectApiName, body);
     }
 
-    /** 批量更新记录。 */
+    /**
+     * 批量更新记录。
+     * <p>
+     * @param objectApiName 对象 api_name
+     * @param appKey        AE 应用键，可空（使用 primary）
+     * @param body          请求体 JSON
+     * @return AE API 响应 JSON
+     */
     @PatchMapping(path = "/records/batch-update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode batchUpdate(
             @PathVariable String objectApiName,
@@ -61,7 +88,14 @@ public class ObjectDataController {
         return objectDataService.batchUpdate(appKey, objectApiName, body);
     }
 
-    /** 批量删除记录。 */
+    /**
+     * 批量删除记录。
+     * <p>
+     * @param objectApiName 对象 api_name
+     * @param appKey        AE 应用键，可空（使用 primary）
+     * @param body          请求体 JSON
+     * @return AE API 响应 JSON
+     */
     @DeleteMapping(path = "/records/batch-delete", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode batchDelete(
             @PathVariable String objectApiName,
@@ -71,7 +105,14 @@ public class ObjectDataController {
         return objectDataService.batchDelete(appKey, objectApiName, body);
     }
 
-    /** 查询记录。 */
+    /**
+     * 条件查询记录。
+     * <p>
+     * @param objectApiName 对象 api_name
+     * @param appKey        AE 应用键，可空（使用 primary）
+     * @param body          请求体 JSON
+     * @return AE API 响应 JSON
+     */
     @PostMapping(path = "/records/query", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode query(
             @PathVariable String objectApiName,

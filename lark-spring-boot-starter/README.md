@@ -1,53 +1,206 @@
 # Lark Spring Boot Starter
 
-该模块提供一组“对接飞书常用能力”的 Spring Boot 自动配置与 REST 代理接口
+`lark-spring-boot-starter`：基于 Spring Boot 与飞书 **oapi-sdk**，提供常用 REST 与自动配置。**业务工程从公司内部 Maven 仓库拉取依赖使用**（见下文仓库地址与坐标）。
 
-本文面向“企业应用对接飞书”的 **登录（OAuth）** 与 **消息推送（IM 发消息）** 两类高频场景，列出常用接口与可复制的 `curl` 示例。
-
----
-
-## 快速理解两类 Token（非常重要）
-
-- **tenant_access_token**：应用身份（租户级），用于调用通讯录、发消息等“应用权限”接口；**不等于用户登录态**。
-- **user_access_token**：用户身份（OAuth 登录后换取），用于获取用户信息、以用户身份调用某些接口。
+| 约定 | 说明 |
+|------|------|
+| 示例里的地址 | `http://127.0.0.1:8080/api/...` 请换成你的服务地址与 **context-path** |
 
 ---
 
-## 登录（OAuth）常用接口
+## 集成与使用
 
-### 1）授权页（前端跳转/扫码）
+### Maven 仓库（拉取本 starter）
 
-飞书会在用户授权后回调你配置的 redirect_uri，并带上 `code`。
+| | URL |
+|---|-----|
+| **仓库** | `https://nexus-cit.sensetime.com/repository/sensetime-cit` |
 
-- 授权入口文档：[获取授权码](https://open.feishu.cn/document/authentication-management/access-token/obtain-oauth-code)
+业务工程需能解析依赖，在 **`pom.xml`** 配置（若父 POM / `settings.xml` 已指向同一仓库，可省略）：
 
-> 本 starter 当前提供的是“后端换票”接口；授权页 URL 一般由前端拼接并跳转。
+```xml
+<repositories>
+    <repository>
+        <id>sensetime-cit</id>
+        <url>https://nexus-cit.sensetime.com/repository/sensetime-cit</url>
+        <releases><enabled>true</enabled></releases>
+        <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+</repositories>
+```
 
-授权页 URL 示例（浏览器直接打开/前端重定向）：
+仅使用 **Release** 构件、不依赖 SNAPSHOT 时，可将 `<snapshots><enabled>false</enabled></snapshots>`。
+
+
+### 环境
+
+| 项 | 要求 |
+|----|------|
+| JDK | 17+ |
+| Spring Boot | 3.x（建议与 starter 构建版本一致） |
+
+### Maven 依赖
+
+宿主 `pom.xml` 引入 starter；并需 **`spring-boot-starter-web`**（提供 Servlet，否则 `/lark/**` 无法对外服务）。
+
+```xml
+<dependency>
+    <groupId>com.larksuite</groupId>
+    <artifactId>lark-spring-boot-starter</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+
+Gradle：
+
+```groovy
+repositories {
+    maven { url 'https://nexus-cit.sensetime.com/repository/sensetime-cit' }
+}
+implementation 'com.larksuite:lark-spring-boot-starter:1.0.0-SNAPSHOT'
+```
+
+### 配置（`application.yml`）
+
+| 前缀 | 用途 |
+|------|------|
+| **`lark.oapi`** | 飞书开放平台应用：`base-url`、`apps.{appKey}.app-id` / `app-secret` 等（必填，用于 OAuth、通讯录、IM 等） |
+| **`lark.apass`** | 可选；飞书aPass应用：`base-url`、`apps.{appKey}.id` / `secret` / `namespace` 等 |
+
+最小示例（单应用 `default`）：
+
+```yaml
+lark:
+  oapi:
+    base-url: https://open.feishu.cn
+    apps:
+      default:
+        app-id: ${APP_ID:}
+        app-secret: ${APP_SECRET:}
+```
+
+多应用在 `apps` 下增加多个 key，接口调用时通过 appKey 区分应用。
+
+### 直接注入 `*Service`（可选）
+
+下面以 **发 IM 文本** 为例（与 `POST /lark/im/send-text` 同源；需开放平台 IM 权限，`receiveId` / `receiveIdType` 与飞书文档一致）：
+
+```java
+import com.lark.oapi.service.im.v1.enums.ReceiveIdTypeEnum;
+import com.larksuite.lark.sdk.service.message.ImMessageService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class LarkNotifyService {
+    private final ImMessageService imMessageService;
+
+    public LarkNotifyService(ImMessageService imMessageService) {
+        this.imMessageService = imMessageService;
+    }
+
+    public void sendToUser(String appKey, String userId, String text) throws Exception {
+        var resp = imMessageService.sendText(appKey, ReceiveIdTypeEnum.USER_ID, userId, text);
+        if (!resp.success()) {
+            throw new IllegalStateException(resp.getCode() + " " + resp.getMsg());
+        }
+    }
+}
+```
+
+### 使用方式小结
+
+| 步骤 | 说明 |
+|------|------|
+| 1 | 依赖 + `lark.oapi` |
+| 2 | 启动后调 **`/lark/**`** 或注入 `*Service` |
+| 3 | （可选）SpringDoc |
+
+---
+
+## 免密登录（飞书 OAuth）
+
+### 整体步骤
+
+| 步骤 | 做什么 |
+|------|--------|
+| 1 | **你**：开放平台建应用、开权限、登记 **重定向 URL**；`application.yml` 配 **`lark.oapi.apps`** |
+| 2 | **你**：拼授权页 URL，用户打开并完成授权（[官方说明](https://open.feishu.cn/document/authentication-management/access-token/obtain-oauth-code)） |
+| 3 | 飞书回调你的 `redirect_uri`，带上 **`code`** |
+| 4 | **Starter**：`POST /lark/auth/access-token` 用 `code` 换 **`user_access_token`** |
+| 5 | **Starter**（可选）：`POST /lark/identity/user-info` 拉资料 |
+| 6 | **你**：写 Session/JWT、与用户表绑定 |
+
+### Starter 免密相关接口
+
+| 方法 | 路径 | 作用 |
+|------|------|------|
+| POST | `/lark/auth/access-token` | `code` → `user_access_token`（H5/App/小程序通用） |
+| POST | `/lark/auth/refresh-access-token` | 刷新用户 token |
+| POST | `/lark/identity/user-info` | 用 `user_access_token` 取用户信息 |
+| GET | `/lark/auth/authorize`（可选） | 浏览器整页回调；未覆盖 **`LarkOAuthService`** 时默认 **`onAuthorized`** 会报错 |
+
+### `LarkOAuthService`
+
+**飞书免密登陆**时必须实现该接口，未实现访问 GET `/lark/auth/authorize` 抛错。不对接则不必实现。
+
+```java
+import com.lark.oapi.service.authen.v1.model.CreateAccessTokenResp;
+import com.larksuite.lark.sdk.service.auth.LarkOAuthService;
+import com.larksuite.lark.sdk.service.auth.LarkOAuthUserProfile;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
+
+@Component
+public class LarkOAuthServiceImpl implements LarkOAuthService {
+
+    @Override
+    public Object onAuthorized(String appKey, HttpServletRequest request, String state,
+                               LarkOAuthUserProfile userProfile, CreateAccessTokenResp tokenResponse) {
+        var body = userProfile.raw();
+        String userName = body.getName(); // 飞书返回用户信息
+
+        // 自行实现内容：根据用户标识从数据库加载本系统用户 
+    }
+}
+```
+
+### 须你配置
+
+| 项 | 说明 |
+|----|------|
+| `redirect_uri` | 与开放平台登记 **完全一致**（含 https、路径、query） |
+| 多应用 | 回调 URL 可加 `?appKey=配置键`（对应 `lark.oapi.apps` 的 key） |
+| Swagger UI | Starter **不含**；需要时在 **宿主** 引入 **SpringDoc**（`springdoc-openapi-starter-webmvc-ui` 等） |
+
+### Token
+
+| Token | 含义 |
+|-------|------|
+| `user_access_token` | 用户身份（OAuth） |
+| `tenant_access_token` | 应用身份，见「其他功能」；**不是**用户登录 |
+
+### 脚本与 curl
+
+**前端使用授权页 URL**
 
 ```bash
 python3 - <<'PY'
 import urllib.parse
 
 client_id = "cli_a94a1fa790f91ccc"
-redirect_uri = "https://report-test.sensetime.com/api/sys/cas/lark/callback"
+app_key = "default"  # 多应用填写；单应用可 "" 省略 appKey
+callback = "https://report-test.sensetime.com/api/lark/auth/authorize"
+redirect_uri = callback + (("?appKey=" + urllib.parse.quote(app_key)) if app_key else "")
 scope = "contact:contact.base:readonly"
 state = "RANDOMSTRING"
-
 base = "https://accounts.feishu.cn/open-apis/authen/v1/authorize"
-q = {
-  "client_id": client_id,
-  "response_type": "code",
-  "redirect_uri": redirect_uri,
-  "scope": scope,
-  "prompt": "consent",
-  "state": state,
-}
+q = {"client_id": client_id, "response_type": "code", "redirect_uri": redirect_uri,
+     "scope": scope, "prompt": "consent", "state": state}
 print(base + "?" + urllib.parse.urlencode(q, quote_via=urllib.parse.quote))
 PY
 ```
 
-### 2）后端用 code 换 user_access_token
+**换票**
 
 ```bash
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/auth/access-token' \
@@ -55,7 +208,7 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/auth/access-token' \
   -d '{"appKey":"default","code":"YOUR_CODE"}'
 ```
 
-### 3）刷新 user_access_token
+**刷新**
 
 ```bash
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/auth/refresh-access-token' \
@@ -63,7 +216,7 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/auth/refresh-access-token' \
   -d '{"appKey":"default","refreshToken":"YOUR_REFRESH_TOKEN"}'
 ```
 
-### 4）用 user_access_token 获取用户信息
+**用户信息**
 
 ```bash
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/identity/user-info' \
@@ -73,11 +226,19 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/identity/user-info' \
 
 ---
 
-## 应用级 Token（tenant_access_token）
+## Starter其他功能接口
 
-该接口用于“应用能力”（如发消息、通讯录查询等）。返回结构与飞书官方文档一致：
+| 说明 | |
+|------|---|
+| 下列 **curl** 可直接调 | 飞书 **权限、receiveId、业务数据** 须你在开放平台与本系统配置 |
 
-- 官方文档：[`tenant_access_token/internal`](https://open.feishu.cn/document/server-docs/authentication-management/access-token/tenant_access_token_internal)
+| 能力 | 路径 | 飞书侧须你 |
+|------|------|------------|
+| 应用 token | `POST /lark/auth/tenant-access-token/internal` | 应用能力相关权限；[飞书文档](https://open.feishu.cn/document/server-docs/authentication-management/access-token/tenant_access_token_internal) |
+| 通讯录示例 | `POST /lark/contact/users/batch-get-id` | 通讯录权限 |
+| IM | `POST /lark/im/send-text` 等 | IM 权限；`receiveIdType` 与 `receiveId` 匹配 |
+
+**应用 token**
 
 ```bash
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/auth/tenant-access-token/internal' \
@@ -85,9 +246,7 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/auth/tenant-access-token/intern
   -d '{"appKey":"default"}'
 ```
 
----
-
-## 通讯录：手机号/邮箱批量换 user_id（常用于“找到接收人”）
+**通讯录示例**
 
 ```bash
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/contact/users/batch-get-id' \
@@ -100,16 +259,14 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/contact/users/batch-get-id' \
   }'
 ```
 
----
+**IM**
 
-## 推送消息（IM 发消息）常用接口
-
-### 1）发文本消息
-
-`receiveIdType` 与 `receiveId` 必须匹配：
-
-- 发给个人：`OPEN_ID` / `USER_ID` / `EMAIL` 等
-- 发到群：`CHAT_ID`
+| 类型 | 路径 |
+|------|------|
+| 文本 | `POST /lark/im/send-text` |
+| 卡片 | `POST /lark/im/send-card` |
+| 模板卡片 | `POST /lark/im/send-card-template` |
+| 更新消息 | `POST /lark/im/update-message` |
 
 ```bash
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/im/send-text' \
@@ -117,19 +274,11 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/im/send-text' \
   -d '{"appKey":"default","receiveIdType":"USER_ID","receiveId":"3f64af1d","text":"hello"}'
 ```
 
-### 2）发交互式卡片（自己拼 card JSON）
-
-`cardJson` 是“卡片对象 JSON”的字符串（需要转义或用脚本生成）。
-
 ```bash
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/im/send-card' \
   -H 'Content-Type: application/json' \
   -d '{"appKey":"default","receiveIdType":"USER_ID","receiveId":"3f64af1d","cardJson":"{\"config\":{\"wide_screen_mode\":true},\"header\":{\"template\":\"blue\",\"title\":{\"tag\":\"plain_text\",\"content\":\"标题\"}},\"elements\":[{\"tag\":\"div\",\"text\":{\"tag\":\"lark_md\",\"content\":\"内容\"}}]}"}'
 ```
-
-### 3）发“模板卡片”（只传 templateId + 变量）
-
-如果你在飞书开放平台卡片搭建工具里发布了卡片模板（拿到 `template_id`），可用该接口只传变量。
 
 ```bash
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/im/send-card-template' \
@@ -148,49 +297,25 @@ curl -sS -X POST 'http://127.0.0.1:8080/api/lark/im/send-card-template' \
   }'
 ```
 
-### 4）更新消息内容（按 messageId）
-
 ```bash
 curl -sS -X POST 'http://127.0.0.1:8080/api/lark/im/update-message' \
   -H 'Content-Type: application/json' \
   -d '{"appKey":"default","messageId":"om_xxx","contentJson":"{\"text\":\"更新后的文本内容\"}"}'
 ```
 
+| 更多 | 位置 |
+|------|------|
+| 审批、日历、机器人、AE 等 | 源码 `*Controller` |
+| 更多 `curl` | 对照源码 `*Controller` 的请求体与路径自行编写 |
+
 ---
 
-## 相关脚本
+## 工作台（Web / 小程序）
 
-项目根目录 `scripts/lark-sdk-test.sh` 内包含更完整的 `curl` 示例集合（含 IM、通讯录、审批、日历等）。
-
----
-
-## 工作台打开 Web / 小程序：需要调用哪些接口
-
-### 1）工作台打开 Web（H5/PC）
-
-飞书工作台只负责“把用户带到你的 URL”，用户身份获取通常仍走 OAuth。
-
-- **飞书侧配置**：工作台入口指向你的 `https://...` 页面（域名白名单/HTTPS 按开放平台要求配置）。
-- **你侧常用链路**：
-  - 页面拿到 OAuth 回调参数 `code`（由飞书跳转回你的 `redirect_uri` 携带）
-  - 后端换票拿 `user_access_token`
-  - 再用 `user_access_token` 拉用户信息，建立你自己系统的 session/JWT
-
-后端接口（本 starter 已提供）：
-
-- `POST /api/lark/auth/access-token`：code 换 `user_access_token`（见上文「登录（OAuth）常用接口」）
-- `POST /api/lark/identity/user-info`：用 `user_access_token` 拉用户信息（见上文「登录（OAuth）常用接口」）
-
-### 2）工作台打开小程序
-
-工作台打开小程序时，“入口与跳转”由飞书侧配置，小程序端再把用户态凭证/临时 code 交给你后端换票（整体与 Web 类似）。
-
-- **飞书侧配置**：应用开通小程序能力，并在工作台配置入口为小程序。
-- **你侧常用链路**：
-  - 小程序端获取到用于换票的 `code`（来自飞书小程序/JS-SDK 的授权流程）
-  - 后端同样用 `POST /api/lark/auth/access-token` 换取 `user_access_token`
-  - 再用 `POST /api/lark/identity/user-info` 获取用户信息并建立你自己的登录态
-
-> 说明：本 starter 目前提供的是“后端换票 + 拉用户信息”的通用接口；小程序端“怎么拿到 code”
-> 取决于你在飞书开放平台的小程序/JS-SDK 接入方式。
-
+| 步骤 | 内容 |
+|------|------|
+| 1 | **你** 在飞书配工作台入口、域名白名单等 |
+| 2 | 端上拿到 `code`（方式见飞书小程序/JS-SDK 文档） |
+| 3 | `POST /lark/auth/access-token` 换票 |
+| 4 | 按需 `POST /lark/identity/user-info` |
+| 5 | **你** 做账号绑定、发 JWT |

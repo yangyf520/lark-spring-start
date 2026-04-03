@@ -23,10 +23,21 @@ public class OpsAlertController {
 
     private final OpsAlertService opsAlertService;
 
+    /**
+     * 构造注入。
+     * <p>
+     * @param opsAlertService 运维告警服务
+     */
     public OpsAlertController(OpsAlertService opsAlertService) {
         this.opsAlertService = opsAlertService;
     }
 
+    /**
+     * 发送运维告警（建群或向已有群发消息）。
+     * <p>
+     * @param req 告警请求体
+     * @return 发送结果
+     */
     @PostMapping(path = "/alert", consumes = MediaType.APPLICATION_JSON_VALUE)
     public OpsAlertResult alert(@Valid @RequestBody OpsAlertRequest req) throws Exception {
         return opsAlertService.sendOpsAlert(req);

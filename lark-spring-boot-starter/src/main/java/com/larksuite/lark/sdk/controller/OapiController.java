@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** 多应用 OAPI Client 注册信息与 token 探测（不含密钥）。 */
+/**
+ * 多应用 OAPI Client 注册信息与 token 探测（不含密钥）。
+ * <p>
+ * 成功与异常由全局 Advice 统一处理。
+ */
 @LarkApi
 @RestController
 @RequestMapping(path = "/lark/oapi", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -20,11 +24,20 @@ public class OapiController {
 
     private final ClientRegistry clientRegistry;
 
+    /**
+     * 构造注入。
+     * <p>
+     * @param clientRegistry 多应用 Client 注册表
+     */
     public OapiController(ClientRegistry clientRegistry) {
         this.clientRegistry = clientRegistry;
     }
 
-    /** 列出应用配置：返回主应用 key 与已注册 appKey 列表。 */
+    /**
+     * 列出主应用 key 与已注册 appKey。
+     * <p>
+     * @return {@code primaryKey}、{@code appKeys}
+     */
     @GetMapping("/apps")
     public Map<String, Object> apps() {
         Map<String, Object> m = new LinkedHashMap<>();
@@ -33,7 +46,12 @@ public class OapiController {
         return m;
     }
 
-    /** 校验应用键：校验指定 appKey 是否可解析为 OAPI Client。 */
+    /**
+     * 校验指定 appKey 是否可解析为 OAPI Client。
+     * <p>
+     * @param appKey 应用配置键，必填
+     * @return {@code appKey} 确认信息
+     */
     @GetMapping("/check-app")
     public Map<String, Object> checkApp(@RequestParam @NotBlank String appKey) {
         clientRegistry.get(appKey);

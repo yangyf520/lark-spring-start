@@ -24,7 +24,7 @@ management:
 logging:
   level:
     com.lark.oapi.core.Transport: DEBUG
-    com.larksuite.lark.app.core.openapi.AppOpenApiClient: DEBUG
+    com.larksuite.lark.app.core.api.AppApiClient: DEBUG
 
 lark:
   oapi:

@@ -21,7 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/** 飞书事件 HTTP 回调：验签解密后交给 SDK {@link com.lark.oapi.event.EventDispatcher}。 */
+/**
+ * 飞书事件 HTTP 回调：验签解密后交给 SDK {@link com.lark.oapi.event.EventDispatcher}。
+ * <p>
+ * 响应为飞书/SDK 原生格式，不经 {@link com.larksuite.lark.common.annotation.LarkApi} 统一包装。
+ */
 @RestController
 @RequestMapping(path = "/lark", produces = MediaType.APPLICATION_JSON_VALUE)
 public class WebhookController {
@@ -29,12 +33,24 @@ public class WebhookController {
     private final EventDispatcherRegistry dispatcherRegistry;
     private final ClientRegistry clientRegistry;
 
+    /**
+     * 构造注入。
+     * <p>
+     * @param dispatcherRegistry 按 appKey 的事件分发器
+     * @param clientRegistry     多应用 Client 注册表
+     */
     public WebhookController(EventDispatcherRegistry dispatcherRegistry, ClientRegistry clientRegistry) {
         this.dispatcherRegistry = dispatcherRegistry;
         this.clientRegistry = clientRegistry;
     }
 
-    /** 飞书事件回调入口：接收飞书事件订阅回调并交给 SDK 处理。 */
+    /**
+     * 接收飞书事件订阅回调并交给 SDK 处理。
+     * <p>
+     * @param appKey   路径中的 appKey，可空（使用 primary 或 {@code default}）
+     * @param request  原始 HTTP 请求
+     * @param response 原始 HTTP 响应
+     */
     @PostMapping(path = {"/webhook", "/webhook/{appKey}"})
     public void webhook(
             @PathVariable(required = false) String appKey,
@@ -50,6 +66,12 @@ public class WebhookController {
         writeResponse(response, eventResp);
     }
 
+    /**
+     * 解析路径 appKey；未传时使用 primary，否则 {@code default}。
+     * <p>
+     * @param appKey 路径变量，可空
+     * @return 用于选取 {@link com.larksuite.lark.sdk.core.EventDispatcherRegistry} 的 key
+     */
     private String appKeyOrDefault(String appKey) {
         if (appKey != null && !appKey.isBlank()) {
             return appKey;
@@ -61,6 +83,12 @@ public class WebhookController {
         return "default";
     }
 
+    /**
+     * 将 Servlet 请求头转为多值 Map。
+     * <p>
+     * @param request 当前请求
+     * @return 头名 → 值列表
+     */
     private static Map<String, List<String>> headerMap(HttpServletRequest request) {
         Enumeration<String> names = request.getHeaderNames();
         if (names == null) {
@@ -74,11 +102,23 @@ public class WebhookController {
         return headers;
     }
 
+    /**
+     * 读取请求体字节。
+     * <p>
+     * @param request 当前请求
+     * @return UTF-8 字节
+     */
     private static byte[] readBodyBytes(HttpServletRequest request) throws IOException {
         String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
         return body.getBytes(StandardCharsets.UTF_8);
     }
 
+    /**
+     * 将 SDK {@link EventResp} 写回 Servlet 响应。
+     * <p>
+     * @param response Servlet 响应
+     * @param eventResp SDK 事件响应
+     */
     private static void writeResponse(HttpServletResponse response, EventResp eventResp) throws IOException {
         response.setStatus(eventResp.getStatusCode());
         if (eventResp.getHeaders() != null) {

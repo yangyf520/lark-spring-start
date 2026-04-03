@@ -1,8 +1,8 @@
 package com.larksuite.lark.app.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.larksuite.lark.app.core.openapi.AppOpenApiClient;
-import com.larksuite.lark.app.core.openapi.AppOpenApiClientRegistry;
+import com.larksuite.lark.app.core.api.AppApiClient;
+import com.larksuite.lark.app.core.api.AppApiClientRegistry;
 import org.springframework.http.HttpMethod;
 
 import java.net.URLEncoder;
@@ -17,9 +17,9 @@ public class ObjectDataService {
     private static final String RECORDS_PATH = "/v1/data/namespaces/%s/objects/%s/records";
     private static final String RECORDS_QUERY_PATH = "/v1/data/namespaces/%s/objects/%s/records_query";
 
-    private final AppOpenApiClientRegistry registry;
+    private final AppApiClientRegistry registry;
 
-    public ObjectDataService(AppOpenApiClientRegistry registry) {
+    public ObjectDataService(AppApiClientRegistry registry) {
         this.registry = registry;
     }
 
@@ -55,7 +55,7 @@ public class ObjectDataService {
             String pathTemplate,
             JsonNode body
     ) throws Exception {
-        AppOpenApiClient client = registry.getClient(appKey);
+        AppApiClient client = registry.getClient(appKey);
         String namespace = namespaceOrThrow(client);
         String encoded = encodePathSegment(objectApiName);
         String path = pathTemplate.formatted(namespace, encoded);
@@ -69,7 +69,7 @@ public class ObjectDataService {
         return URLEncoder.encode(objectApiName, StandardCharsets.UTF_8).replace("+", "%20");
     }
 
-    private String namespaceOrThrow(AppOpenApiClient client) {
+    private String namespaceOrThrow(AppApiClient client) {
         String namespace = client.namespace();
         if (namespace == null || namespace.isBlank()) {
             throw new IllegalStateException("lark.apass.apps.<appKey>.namespace is required");

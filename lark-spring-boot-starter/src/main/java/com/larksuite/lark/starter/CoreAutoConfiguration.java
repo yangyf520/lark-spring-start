@@ -7,8 +7,8 @@ import com.larksuite.lark.app.service.DepartmentService;
 import com.larksuite.lark.app.service.ObjectDataService;
 import com.larksuite.lark.app.service.ObjectMetadataService;
 import com.larksuite.lark.app.service.UserService;
-import com.larksuite.lark.app.core.openapi.AppOpenApiClientRegistry;
-import com.larksuite.lark.app.core.openapi.AppOpenApiProperties;
+import com.larksuite.lark.app.core.api.AppApiClientRegistry;
+import com.larksuite.lark.app.core.api.AppApiProperties;
 import com.larksuite.lark.common.jackson.DepartmentJsonMixin;
 import com.larksuite.lark.common.jackson.UserJsonMixin;
 import com.larksuite.lark.sdk.service.message.ImMessageService;
@@ -16,6 +16,7 @@ import com.larksuite.lark.sdk.core.ClientRegistry;
 import com.larksuite.lark.sdk.core.SdkProperties;
 import com.larksuite.lark.sdk.service.approval.ApprovalService;
 import com.larksuite.lark.sdk.service.auth.AuthService;
+import com.larksuite.lark.sdk.service.auth.LarkOAuthService;
 import com.larksuite.lark.sdk.service.bitable.BitableService;
 import com.larksuite.lark.sdk.service.bot.BotService;
 import com.larksuite.lark.sdk.service.calendar.CalendarService;
@@ -35,9 +36,9 @@ import org.springframework.context.annotation.Bean;
 @EnableConfigurationProperties({
         SdkProperties.class,
         ClientProperties.class,
-        AppOpenApiProperties.class
+        AppApiProperties.class
 })
-/** Starter 核心 Bean 注入（SDK + AE OpenAPI）。 */
+/** Starter 核心 Bean 注入（SDK + AE API）。 */
 public class CoreAutoConfiguration {
 
     /**
@@ -59,6 +60,16 @@ public class CoreAutoConfiguration {
     @ConditionalOnMissingBean
     public AuthService authService(ClientRegistry registry, SdkProperties properties, ObjectMapper objectMapper, ApiExecutor executor) {
         return new AuthService(registry, properties, objectMapper, executor);
+    }
+
+    /**
+     * 占位：保证 {@link LarkOAuthService} 可注入、应用能启动；{@link LarkOAuthService#onAuthorized} 默认实现会在 GET /lark/auth/authorize 时抛错。
+     * 宿主提供自定义 {@link LarkOAuthService} Bean 时覆盖本 Bean。
+     */
+    @Bean
+    @ConditionalOnMissingBean(LarkOAuthService.class)
+    public LarkOAuthService larkOAuthService() {
+        return new LarkOAuthService() {};
     }
 
     /** 通讯录 contact v3。 */
@@ -131,38 +142,38 @@ public class CoreAutoConfiguration {
         return new BitableService(registry, executor);
     }
 
-    /** 应用开放平台 AE API 多应用客户端。 */
+    /** 应用引擎 AE API 多应用客户端。 */
     @Bean
     @ConditionalOnMissingBean
-    public AppOpenApiClientRegistry appOpenApiClientRegistry(ObjectMapper objectMapper, AppOpenApiProperties properties) {
-        return new AppOpenApiClientRegistry(objectMapper, properties);
+    public AppApiClientRegistry appApiClientRegistry(ObjectMapper objectMapper, AppApiProperties properties) {
+        return new AppApiClientRegistry(objectMapper, properties);
     }
 
     /** AE 部门数据。 */
     @Bean
     @ConditionalOnMissingBean
-    public DepartmentService departmentService(AppOpenApiClientRegistry registry) {
+    public DepartmentService departmentService(AppApiClientRegistry registry) {
         return new DepartmentService(registry);
     }
 
     /** AE 对象元数据。 */
     @Bean
     @ConditionalOnMissingBean
-    public ObjectMetadataService objectMetadataService(AppOpenApiClientRegistry registry) {
+    public ObjectMetadataService objectMetadataService(AppApiClientRegistry registry) {
         return new ObjectMetadataService(registry);
     }
 
     /** AE 用户数据。 */
     @Bean
     @ConditionalOnMissingBean
-    public UserService userService(AppOpenApiClientRegistry registry) {
+    public UserService userService(AppApiClientRegistry registry) {
         return new UserService(registry);
     }
 
     /** AE 对象实例数据。 */
     @Bean
     @ConditionalOnMissingBean
-    public ObjectDataService objectDataService(AppOpenApiClientRegistry registry) {
+    public ObjectDataService objectDataService(AppApiClientRegistry registry) {
         return new ObjectDataService(registry);
     }
 }

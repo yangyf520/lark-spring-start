@@ -47,7 +47,7 @@ public class SdkProperties {
     private Boolean disableTokenCache = false;
 
     /**
-     * 多应用配置（key 为 appKey）。仅配置一个应用时自动作为默认主应用，无需再配 primary。
+     * 多应用配置（key 为 appKey）。
      */
     private Map<String, App> apps = new LinkedHashMap<>();
 

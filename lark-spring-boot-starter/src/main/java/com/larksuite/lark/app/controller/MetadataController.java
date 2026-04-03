@@ -13,21 +13,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * AE 对象元数据（低代码 App：对象定义）。
+ * <p>
+ * 成功与异常由全局 Advice 与 Service 统一处理。
+ */
 @LarkApi
 @RestController
 @RequestMapping(path = "/lark/app/objects", produces = MediaType.APPLICATION_JSON_VALUE)
-/** AE 对象元数据相关 HTTP 接口。 */
 public class MetadataController {
 
     private final ObjectMetadataService objectMetadataService;
 
+    /**
+     * 构造注入。
+     * <p>
+     * @param objectMetadataService 对象元数据服务
+     */
     public MetadataController(ObjectMetadataService objectMetadataService) {
         this.objectMetadataService = objectMetadataService;
     }
 
     /**
-     * 批量创建对象元数据（低代码 App：对象定义）。
-     * @param req 请求体：objects（对象定义数组）
+     * 批量创建对象元数据。
+     * <p>
+     * @param appKey AE 应用键，可空（使用 primary）
+     * @param req    请求体：{@code objects} 对象定义数组
+     * @return AE API 响应 JSON
      */
     @PostMapping(path = "/batch-create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode batchCreate(
@@ -38,8 +50,11 @@ public class MetadataController {
     }
 
     /**
-     * 批量更新对象元数据（低代码 App：对象定义）。
-     * @param req 请求体：objects（对象定义数组）
+     * 批量更新对象元数据。
+     * <p>
+     * @param appKey AE 应用键，可空（使用 primary）
+     * @param req    请求体：{@code objects} 对象定义数组
+     * @return AE API 响应 JSON
      */
     @PostMapping(path = "/batch-update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode batchUpdate(
@@ -50,8 +65,11 @@ public class MetadataController {
     }
 
     /**
-     * 批量删除对象元数据（低代码 App：对象定义）。
-     * @param req 请求体：object_api_names（对象 api_name 数组；内部会转为对端要求的 api_names）
+     * 批量删除对象元数据。
+     * <p>
+     * @param appKey AE 应用键，可空（使用 primary）
+     * @param req    请求体：{@code object_api_names}（内部会规范为对端 {@code api_names}）
+     * @return AE API 响应 JSON
      */
     @PostMapping(path = "/batch-delete", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JsonNode batchDelete(
