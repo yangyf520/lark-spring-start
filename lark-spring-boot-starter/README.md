@@ -47,7 +47,7 @@
 <dependency>
     <groupId>com.larksuite</groupId>
     <artifactId>lark-spring-boot-starter</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
@@ -57,7 +57,7 @@ Gradle：
 repositories {
     maven { url 'https://nexus-cit.sensetime.com/repository/sensetime-cit' }
 }
-implementation 'com.larksuite:lark-spring-boot-starter:1.0.0-SNAPSHOT'
+implementation 'com.larksuite:lark-spring-boot-starter:0.1.0'
 ```
 
 ### 配置（`application.yml`）

@@ -35,9 +35,12 @@ if ! command -v mvn >/dev/null 2>&1; then
   exit 1
 fi
 
-# Compile & package in a reactor so the starter module is available
+# Compile & package in a reactor so the starter module is available (must run from repo root)
 rm -f "$LOG_DIR/backend-build.log"
-mvn -DskipTests -pl backend -am package 2>&1 | tee "$LOG_DIR/backend-build.log"
+(
+  cd "$ROOT_DIR"
+  mvn -DskipTests -pl backend -am package
+) 2>&1 | tee "$LOG_DIR/backend-build.log"
 
 # Pick the first jar produced by backend packaging
 BACKEND_JAR=""
