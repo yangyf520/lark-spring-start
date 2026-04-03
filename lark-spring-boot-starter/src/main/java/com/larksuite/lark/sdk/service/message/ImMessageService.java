@@ -11,7 +11,8 @@ import com.lark.oapi.service.im.v1.model.UpdateMessageReq;
 import com.lark.oapi.service.im.v1.model.UpdateMessageReqBody;
 import com.lark.oapi.service.im.v1.model.UpdateMessageResp;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.larksuite.lark.sdk.core.OapiClientRegistry;
+import com.larksuite.lark.common.support.ApiExecutor;
+import com.larksuite.lark.sdk.core.ClientRegistry;
 
 import java.util.Map;
 import java.util.Objects;
@@ -19,12 +20,14 @@ import java.util.Objects;
 /** 以应用身份调用 IM v1：发文本、卡片、更新消息；返回完整 SDK Resp。 */
 public class ImMessageService {
 
-    private final OapiClientRegistry registry;
+    private final ClientRegistry registry;
     private final ObjectMapper objectMapper;
+    private final ApiExecutor executor;
 
-    public ImMessageService(OapiClientRegistry registry, ObjectMapper objectMapper) {
+    public ImMessageService(ClientRegistry registry, ObjectMapper objectMapper, ApiExecutor executor) {
         this.registry = registry;
         this.objectMapper = objectMapper;
+        this.executor = executor;
     }
 
     public CreateMessageResp sendText(String appKey, ReceiveIdTypeEnum receiveIdType, String receiveId, String text) throws Exception {
@@ -51,7 +54,9 @@ public class ImMessageService {
                         .build())
                 .build();
 
-        return client.im().message().create(req);
+        return executor.execute("im.v1.message.create", appKey,
+                "msgType=text,receiveIdType=" + receiveIdType + ",receiveId=" + receiveId,
+                () -> client.im().message().create(req));
     }
 
     public CreateMessageResp sendCard(String appKey, ReceiveIdTypeEnum receiveIdType, String receiveId, String cardJson) throws Exception {
@@ -72,7 +77,9 @@ public class ImMessageService {
                         .content(cardJson)
                         .build())
                 .build();
-        return client.im().message().create(req);
+        return executor.execute("im.v1.message.create", appKey,
+                "msgType=interactive,receiveIdType=" + receiveIdType + ",receiveId=" + receiveId,
+                () -> client.im().message().create(req));
     }
 
     /**
@@ -123,6 +130,7 @@ public class ImMessageService {
                         .content(contentJson)
                         .build())
                 .build();
-        return client.im().message().update(req);
+        return executor.execute("im.v1.message.update", appKey, "messageId=" + messageId,
+                () -> client.im().message().update(req));
     }
 }

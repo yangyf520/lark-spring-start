@@ -9,7 +9,7 @@ import java.util.Map;
 @Validated
 @ConfigurationProperties(prefix = "lark.oapi")
 /** 飞书 SDK 配置（支持多应用）。 */
-public class OapiProperties {
+public class SdkProperties {
 
     /**
      * 默认 OpenAPI 域名。
@@ -47,22 +47,9 @@ public class OapiProperties {
     private Boolean disableTokenCache = false;
 
     /**
-     * 主应用 appKey。
-     */
-    private String primary;
-
-    /**
-     * 多应用配置（key 为 appKey）。
+     * 多应用配置（key 为 appKey）。仅配置一个应用时自动作为默认主应用，无需再配 primary。
      */
     private Map<String, App> apps = new LinkedHashMap<>();
-
-    public String getPrimary() {
-        return primary;
-    }
-
-    public void setPrimary(String primary) {
-        this.primary = primary;
-    }
 
     public Map<String, App> getApps() {
         return apps;
@@ -241,4 +228,3 @@ public class OapiProperties {
         }
     }
 }
-

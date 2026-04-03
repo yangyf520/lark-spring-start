@@ -12,8 +12,8 @@ import com.larksuite.lark.app.core.openapi.AppOpenApiProperties;
 import com.larksuite.lark.common.jackson.DepartmentJsonMixin;
 import com.larksuite.lark.common.jackson.UserJsonMixin;
 import com.larksuite.lark.sdk.service.message.ImMessageService;
-import com.larksuite.lark.sdk.core.OapiClientRegistry;
-import com.larksuite.lark.sdk.core.OapiProperties;
+import com.larksuite.lark.sdk.core.ClientRegistry;
+import com.larksuite.lark.sdk.core.SdkProperties;
 import com.larksuite.lark.sdk.service.approval.ApprovalService;
 import com.larksuite.lark.sdk.service.auth.AuthService;
 import com.larksuite.lark.sdk.service.bitable.BitableService;
@@ -33,12 +33,12 @@ import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
 @EnableConfigurationProperties({
-        OapiProperties.class,
+        SdkProperties.class,
         ClientProperties.class,
         AppOpenApiProperties.class
 })
 /** Starter 核心 Bean 注入（SDK + AE OpenAPI）。 */
-public class CommonAutoConfiguration {
+public class CoreAutoConfiguration {
 
     /**
      * SDK contact 模型使用 Gson 注解；这里通过 Jackson mixin 兼容飞书 snake_case 字段（如 parent_department_id）。
@@ -57,15 +57,15 @@ public class CommonAutoConfiguration {
     /** 认证相关 OpenAPI。 */
     @Bean
     @ConditionalOnMissingBean
-    public AuthService authService(OapiClientRegistry registry, OapiProperties properties, ObjectMapper objectMapper) {
-        return new AuthService(registry, properties, objectMapper);
+    public AuthService authService(ClientRegistry registry, SdkProperties properties, ObjectMapper objectMapper, ApiExecutor executor) {
+        return new AuthService(registry, properties, objectMapper, executor);
     }
 
     /** 通讯录 contact v3。 */
     @Bean
     @ConditionalOnMissingBean
-    public ContactService contactService(OapiClientRegistry registry) {
-        return new ContactService(registry);
+    public ContactService contactService(ClientRegistry registry, ApiExecutor executor) {
+        return new ContactService(registry, executor);
     }
 
     /** 包装 OpenAPI 调用的简单重试。 */
@@ -78,36 +78,36 @@ public class CommonAutoConfiguration {
     /** 帐号 / 身份接口。 */
     @Bean
     @ConditionalOnMissingBean
-    public IdentityService identityService(OapiClientRegistry registry, ApiExecutor executor) {
+    public IdentityService identityService(ClientRegistry registry, ApiExecutor executor) {
         return new IdentityService(registry, executor);
     }
 
     /** 审批。 */
     @Bean
     @ConditionalOnMissingBean
-    public ApprovalService approvalService(OapiClientRegistry registry, ApiExecutor executor) {
+    public ApprovalService approvalService(ClientRegistry registry, ApiExecutor executor) {
         return new ApprovalService(registry, executor);
     }
 
     /** 日历。 */
     @Bean
     @ConditionalOnMissingBean
-    public CalendarService calendarService(OapiClientRegistry registry, ApiExecutor executor) {
+    public CalendarService calendarService(ClientRegistry registry, ApiExecutor executor) {
         return new CalendarService(registry, executor);
     }
 
     /** 群聊 / IM 部分 API。 */
     @Bean
     @ConditionalOnMissingBean
-    public ChatService chatService(OapiClientRegistry registry, ApiExecutor executor) {
+    public ChatService chatService(ClientRegistry registry, ApiExecutor executor) {
         return new ChatService(registry, executor);
     }
 
     /** IM 消息接口。 */
     @Bean
     @ConditionalOnMissingBean
-    public ImMessageService imMessageService(OapiClientRegistry registry, ObjectMapper objectMapper) {
-        return new ImMessageService(registry, objectMapper);
+    public ImMessageService imMessageService(ClientRegistry registry, ObjectMapper objectMapper, ApiExecutor executor) {
+        return new ImMessageService(registry, objectMapper, executor);
     }
 
     /** 运维告警（依赖群与消息）。 */
@@ -120,14 +120,14 @@ public class CommonAutoConfiguration {
     /** 机器人。 */
     @Bean
     @ConditionalOnMissingBean
-    public BotService botService(OapiClientRegistry registry, ApiExecutor executor, ObjectMapper objectMapper) {
+    public BotService botService(ClientRegistry registry, ApiExecutor executor, ObjectMapper objectMapper) {
         return new BotService(registry, executor, objectMapper);
     }
 
     /** 多维表格。 */
     @Bean
     @ConditionalOnMissingBean
-    public BitableService bitableService(OapiClientRegistry registry, ApiExecutor executor) {
+    public BitableService bitableService(ClientRegistry registry, ApiExecutor executor) {
         return new BitableService(registry, executor);
     }
 

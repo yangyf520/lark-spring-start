@@ -1,4 +1,4 @@
-package com.larksuite.lark.app.core.openapi;
+package com.larksuite.lark.app.core.api;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -6,31 +6,31 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @ConfigurationProperties(prefix = "lark.apass")
-/** AE OpenAPI 配置（支持多应用）。 */
-public class AppOpenApiProperties {
+/** AE（飞书应用引擎）API 配置（支持多应用）。 */
+public class AppApiProperties {
 
     private String baseUrl = "https://ae-openapi.feishu.cn";
 
-    /** 多套 AE OpenAPI 配置（key 为业务侧自定义别名）。仅一项时可作为默认 appKey。 */
+    /** 多套配置（key 为业务侧自定义别名）。仅一项时可作为默认 appKey。 */
     private Map<String, App> apps = new LinkedHashMap<>();
 
-    /** 单个应用的 AE OpenAPI 配置。 */
+    /** 单个应用的凭证与 namespace。 */
     public static class App {
         /** 可选覆盖；为空则使用全局 baseUrl。 */
         private String baseUrl;
 
         /**
-         * OpenAPI 凭证：ID（ae-openapi 文档里的 OpenAPI ID/Secret）。
+         * 凭证 ID（ae-openapi 文档中的 ID/Secret）。
          */
         private String id;
 
         /**
-         * OpenAPI 凭证：Secret。
+         * 凭证 Secret。
          */
         private String secret;
 
         /**
-         * OpenAPI namespace（用于拼接到请求路径）。
+         * namespace（用于拼接到请求路径）。
          */
         private String namespace;
 

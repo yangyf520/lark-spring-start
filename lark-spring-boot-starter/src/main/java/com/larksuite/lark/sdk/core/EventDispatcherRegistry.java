@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Objects;
 
 /** 多应用事件回调分发器注册表（供 Webhook 回调按 appKey 路由）。 */
-public class OapiEventDispatcherRegistry {
+public class EventDispatcherRegistry {
 
     private final Map<String, EventDispatcher> dispatchersByKey;
 
-    public OapiEventDispatcherRegistry(Map<String, EventDispatcher> dispatchersByKey) {
+    public EventDispatcherRegistry(Map<String, EventDispatcher> dispatchersByKey) {
         this.dispatchersByKey = Collections.unmodifiableMap(Objects.requireNonNull(dispatchersByKey));
     }
 
@@ -29,4 +29,3 @@ public class OapiEventDispatcherRegistry {
         return dispatcher;
     }
 }
-

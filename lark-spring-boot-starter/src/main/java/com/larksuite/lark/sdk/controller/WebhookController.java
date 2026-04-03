@@ -2,8 +2,8 @@ package com.larksuite.lark.sdk.controller;
 
 import com.lark.oapi.core.request.EventReq;
 import com.lark.oapi.core.response.EventResp;
-import com.larksuite.lark.sdk.core.OapiEventDispatcherRegistry;
-import com.larksuite.lark.sdk.core.OapiProperties;
+import com.larksuite.lark.sdk.core.ClientRegistry;
+import com.larksuite.lark.sdk.core.EventDispatcherRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
@@ -26,12 +26,12 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/lark", produces = MediaType.APPLICATION_JSON_VALUE)
 public class WebhookController {
 
-    private final OapiEventDispatcherRegistry dispatcherRegistry;
-    private final OapiProperties oapiProperties;
+    private final EventDispatcherRegistry dispatcherRegistry;
+    private final ClientRegistry clientRegistry;
 
-    public WebhookController(OapiEventDispatcherRegistry dispatcherRegistry, OapiProperties oapiProperties) {
+    public WebhookController(EventDispatcherRegistry dispatcherRegistry, ClientRegistry clientRegistry) {
         this.dispatcherRegistry = dispatcherRegistry;
-        this.oapiProperties = oapiProperties;
+        this.clientRegistry = clientRegistry;
     }
 
     /** 飞书事件回调入口：接收飞书事件订阅回调并交给 SDK 处理。 */
@@ -54,12 +54,9 @@ public class WebhookController {
         if (appKey != null && !appKey.isBlank()) {
             return appKey;
         }
-        String primary = oapiProperties.getPrimary();
-        if (primary != null && !primary.isBlank()) {
-            return primary;
-        }
-        if (oapiProperties.getApps() != null && oapiProperties.getApps().size() == 1) {
-            return oapiProperties.getApps().keySet().iterator().next();
+        String pk = clientRegistry.primaryKey();
+        if (pk != null && !pk.isBlank()) {
+            return pk;
         }
         return "default";
     }

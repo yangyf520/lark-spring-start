@@ -6,16 +6,16 @@ import com.lark.oapi.service.calendar.v4.model.CreateCalendarEventReq;
 import com.lark.oapi.service.calendar.v4.model.CreateCalendarEventResp;
 import com.lark.oapi.service.calendar.v4.model.GetCalendarEventReq;
 import com.lark.oapi.service.calendar.v4.model.GetCalendarEventResp;
-import com.larksuite.lark.sdk.core.OapiClientRegistry;
+import com.larksuite.lark.sdk.core.ClientRegistry;
 import com.larksuite.lark.common.support.ApiExecutor;
 
 /** 日历 v4：事件查询与创建；返回完整 SDK Resp。 */
 public class CalendarService {
 
-    private final OapiClientRegistry registry;
+    private final ClientRegistry registry;
     private final ApiExecutor executor;
 
-    public CalendarService(OapiClientRegistry registry, ApiExecutor executor) {
+    public CalendarService(ClientRegistry registry, ApiExecutor executor) {
         this.registry = registry;
         this.executor = executor;
     }
@@ -26,7 +26,8 @@ public class CalendarService {
                 .calendarId(calendarId)
                 .eventId(eventId)
                 .build();
-        return executor.execute(() -> client.calendar().v4().calendarEvent().get(req));
+        return executor.execute("calendar.v4.event.get", appKey, "calendarId=" + calendarId + ",eventId=" + eventId,
+                () -> client.calendar().v4().calendarEvent().get(req));
     }
 
     public CreateCalendarEventResp createEvent(String appKey, String calendarId, CalendarEvent body) throws Exception {
@@ -35,7 +36,8 @@ public class CalendarService {
                 .calendarId(calendarId)
                 .calendarEvent(body)
                 .build();
-        return executor.execute(() -> client.calendar().v4().calendarEvent().create(req));
+        return executor.execute("calendar.v4.event.create", appKey, "calendarId=" + calendarId,
+                () -> client.calendar().v4().calendarEvent().create(req));
     }
 
     private Client resolveClient(String appKey) {

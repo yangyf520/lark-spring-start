@@ -1,7 +1,7 @@
 package com.larksuite.lark.sdk.controller;
 
 import com.larksuite.lark.common.annotation.LarkApi;
-import com.larksuite.lark.sdk.core.OapiClientRegistry;
+import com.larksuite.lark.sdk.core.ClientRegistry;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +18,9 @@ import java.util.Map;
 @RequestMapping(path = "/lark/oapi", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OapiController {
 
-    private final OapiClientRegistry clientRegistry;
+    private final ClientRegistry clientRegistry;
 
-    public OapiController(OapiClientRegistry clientRegistry) {
+    public OapiController(ClientRegistry clientRegistry) {
         this.clientRegistry = clientRegistry;
     }
 

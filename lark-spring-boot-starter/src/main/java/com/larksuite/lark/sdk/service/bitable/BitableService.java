@@ -6,7 +6,7 @@ import com.lark.oapi.service.bitable.v1.model.GetAppResp;
 import com.lark.oapi.service.bitable.v1.model.SearchAppTableRecordReq;
 import com.lark.oapi.service.bitable.v1.model.SearchAppTableRecordReqBody;
 import com.lark.oapi.service.bitable.v1.model.SearchAppTableRecordResp;
-import com.larksuite.lark.sdk.core.OapiClientRegistry;
+import com.larksuite.lark.sdk.core.ClientRegistry;
 import com.larksuite.lark.common.support.ApiExecutor;
 
 /**
@@ -16,10 +16,10 @@ import com.larksuite.lark.common.support.ApiExecutor;
  */
 public class BitableService {
 
-    private final OapiClientRegistry registry;
+    private final ClientRegistry registry;
     private final ApiExecutor executor;
 
-    public BitableService(OapiClientRegistry registry, ApiExecutor executor) {
+    public BitableService(ClientRegistry registry, ApiExecutor executor) {
         this.registry = registry;
         this.executor = executor;
     }
@@ -30,7 +30,7 @@ public class BitableService {
         GetAppReq req = GetAppReq.newBuilder()
                 .appToken(appToken)
                 .build();
-        return executor.execute(() -> client.bitable().v1().app().get(req));
+        return executor.execute("bitable.v1.app.get", appKey, "appToken=" + appToken, () -> client.bitable().v1().app().get(req));
     }
 
     /** POST /open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records/search */
@@ -52,7 +52,8 @@ public class BitableService {
                 .pageSize(pageSize)
                 .searchAppTableRecordReqBody(body)
                 .build();
-        return executor.execute(() -> client.bitable().v1().appTableRecord().search(req));
+        return executor.execute("bitable.v1.records.search", appKey, "appToken=" + appToken + ",tableId=" + tableId,
+                () -> client.bitable().v1().appTableRecord().search(req));
     }
 
     private Client resolveClient(String appKey) {

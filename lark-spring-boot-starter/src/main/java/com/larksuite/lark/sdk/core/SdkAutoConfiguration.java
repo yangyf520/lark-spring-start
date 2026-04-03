@@ -14,34 +14,31 @@ import java.util.Map;
 /** 自动装配飞书 SDK 相关核心 Bean。 */
 @AutoConfiguration
 @ConditionalOnClass(Client.class)
-@EnableConfigurationProperties(OapiProperties.class)
-public class OapiAutoConfiguration {
+@EnableConfigurationProperties(SdkProperties.class)
+public class SdkAutoConfiguration {
 
     /** 多应用 Client 注册表（key 对应配置里的 appKey）。 */
     @Bean
     @ConditionalOnMissingBean
-    public OapiClientRegistry oapiClientRegistry(OapiProperties props) {
+    public ClientRegistry clientRegistry(SdkProperties props) {
         Map<String, Client> clients = new LinkedHashMap<>();
-        for (Map.Entry<String, OapiProperties.App> e : props.getApps().entrySet()) {
-            clients.put(e.getKey(), OapiClientFactory.create(withDefaults(props, e.getValue())));
+        for (Map.Entry<String, SdkProperties.App> e : props.getApps().entrySet()) {
+            clients.put(e.getKey(), ClientFactory.create(withDefaults(props, e.getValue())));
         }
 
-        String primary = props.getPrimary();
-        if ((primary == null || primary.isBlank()) && clients.size() == 1) {
-            primary = clients.keySet().iterator().next();
-        }
+        String primary = clients.size() == 1 ? clients.keySet().iterator().next() : null;
 
-        return new OapiClientRegistry(clients, primary);
+        return new ClientRegistry(clients, primary);
     }
 
     /** 事件回调处理器注册表（按 appKey）。 */
     @Bean
     @ConditionalOnClass(EventDispatcher.class)
     @ConditionalOnMissingBean
-    public OapiEventDispatcherRegistry oapiEventDispatcherRegistry(OapiProperties props) {
+    public EventDispatcherRegistry eventDispatcherRegistry(SdkProperties props) {
         Map<String, EventDispatcher> dispatchers = new LinkedHashMap<>();
-        for (Map.Entry<String, OapiProperties.App> e : props.getApps().entrySet()) {
-            OapiProperties.App app = withDefaults(props, e.getValue());
+        for (Map.Entry<String, SdkProperties.App> e : props.getApps().entrySet()) {
+            SdkProperties.App app = withDefaults(props, e.getValue());
 
             String verificationToken = app.getVerificationToken() == null ? "" : app.getVerificationToken();
             String encryptKey = app.getEncryptKey() == null ? "" : app.getEncryptKey();
@@ -49,11 +46,11 @@ public class OapiAutoConfiguration {
             EventDispatcher.Builder builder = EventDispatcher.newBuilder(verificationToken, encryptKey);
             dispatchers.put(e.getKey(), builder.build());
         }
-        return new OapiEventDispatcherRegistry(dispatchers);
+        return new EventDispatcherRegistry(dispatchers);
     }
 
     /** 将 root 默认值补齐到每个 app 配置中。 */
-    private static OapiProperties.App withDefaults(OapiProperties root, OapiProperties.App app) {
+    private static SdkProperties.App withDefaults(SdkProperties root, SdkProperties.App app) {
         if (app == null) {
             return null;
         }
@@ -81,4 +78,3 @@ public class OapiAutoConfiguration {
         return app;
     }
 }
-

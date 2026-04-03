@@ -7,12 +7,12 @@ import java.util.Map;
 import java.util.Objects;
 
 /** 多应用 {@link Client} 注册表，key 与 {@code lark.oapi.apps} 一致。 */
-public class OapiClientRegistry {
+public class ClientRegistry {
 
     private final Map<String, Client> clientsByKey;
     private final String primaryKey;
 
-    public OapiClientRegistry(Map<String, Client> clientsByKey, String primaryKey) {
+    public ClientRegistry(Map<String, Client> clientsByKey, String primaryKey) {
         this.clientsByKey = Collections.unmodifiableMap(Objects.requireNonNull(clientsByKey));
         this.primaryKey = primaryKey;
     }
@@ -36,12 +36,11 @@ public class OapiClientRegistry {
         return primaryKey;
     }
 
-    /** 主应用 client；未配置 primary 时抛 IllegalStateException。 */
+    /** 主应用 client；多应用且未指定 appKey 时抛 IllegalStateException。 */
     public Client primary() {
         if (primaryKey == null || primaryKey.isBlank()) {
-            throw new IllegalStateException("No primary app configured (set lark.oapi.primary)");
+            throw new IllegalStateException("No primary app: configure a single lark.oapi.apps entry or pass appKey");
         }
         return get(primaryKey);
     }
 }
-

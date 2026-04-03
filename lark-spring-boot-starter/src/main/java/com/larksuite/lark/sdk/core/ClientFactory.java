@@ -1,18 +1,21 @@
 package com.larksuite.lark.sdk.core;
 
+import com.larksuite.lark.core.advice.HttpAccessLogger;
 import com.lark.oapi.Client;
 import com.lark.oapi.core.enums.BaseUrlEnum;
+import com.lark.oapi.core.httpclient.OkHttpTransport;
+import com.lark.oapi.core.utils.OKHttps;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-/** 构建飞书 SDK {@link Client} 的工厂（基于 {@link OapiProperties}）。 */
-public final class OapiClientFactory {
+/** 构建飞书 SDK {@link Client} 的工厂（基于 {@link SdkProperties}）。 */
+public final class ClientFactory {
 
-    private OapiClientFactory() {}
+    private ClientFactory() {}
 
     /** 根据单个 app 配置创建 SDK Client。 */
-    public static Client create(OapiProperties.App app) {
+    public static Client create(SdkProperties.App app) {
         Objects.requireNonNull(app, "app");
         if (app.getAppId() == null || app.getAppId().isBlank()) {
             throw new IllegalArgumentException("appId is blank");
@@ -43,6 +46,11 @@ public final class OapiClientFactory {
             builder.disableTokenCache();
         }
 
+        OkHttpTransport okHttp = (app.getRequestTimeoutMs() != null && app.getRequestTimeoutMs() > 0)
+                ? new OkHttpTransport(OKHttps.create(app.getRequestTimeoutMs(), TimeUnit.MILLISECONDS))
+                : new OkHttpTransport(OKHttps.defaultClient);
+        builder.httpTransport(HttpAccessLogger.wrapOapiTransport(okHttp));
+
         return builder.build();
     }
 
@@ -58,4 +66,3 @@ public final class OapiClientFactory {
         throw new IllegalArgumentException("Unsupported lark.oapi.base-url: " + baseUrl);
     }
 }
-

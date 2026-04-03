@@ -7,16 +7,16 @@ import com.lark.oapi.service.im.v1.model.CreateChatReqBody;
 import com.lark.oapi.service.im.v1.model.CreateChatResp;
 import com.lark.oapi.service.im.v1.model.GetChatReq;
 import com.lark.oapi.service.im.v1.model.GetChatResp;
-import com.larksuite.lark.sdk.core.OapiClientRegistry;
+import com.larksuite.lark.sdk.core.ClientRegistry;
 import com.larksuite.lark.common.support.ApiExecutor;
 
 /** IM 群：查询与创建会话；返回完整 SDK Resp。 */
 public class ChatService {
 
-    private final OapiClientRegistry registry;
+    private final ClientRegistry registry;
     private final ApiExecutor executor;
 
-    public ChatService(OapiClientRegistry registry, ApiExecutor executor) {
+    public ChatService(ClientRegistry registry, ApiExecutor executor) {
         this.registry = registry;
         this.executor = executor;
     }
@@ -26,7 +26,7 @@ public class ChatService {
         GetChatReq req = GetChatReq.newBuilder()
                 .chatId(chatId)
                 .build();
-        return executor.execute(() -> client.im().chat().get(req));
+        return executor.execute("im.chat.get", appKey, "chatId=" + chatId, () -> client.im().chat().get(req));
     }
 
     /**
@@ -40,7 +40,7 @@ public class ChatService {
                 .userIdType(resolveCreateChatUserIdType(userIdType))
                 .createChatReqBody(body)
                 .build();
-        return executor.execute(() -> client.im().chat().create(req));
+        return executor.execute("im.chat.create", appKey, "userIdType=" + (userIdType == null ? "" : userIdType), () -> client.im().chat().create(req));
     }
 
     static CreateChatUserIdTypeEnum resolveCreateChatUserIdType(String userIdType) {

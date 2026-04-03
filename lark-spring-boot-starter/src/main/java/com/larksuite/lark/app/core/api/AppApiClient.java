@@ -1,4 +1,4 @@
-package com.larksuite.lark.app.core.openapi;
+package com.larksuite.lark.app.core.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,18 +16,18 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Iterator;
 
-public class AppOpenApiClient {
+public class AppApiClient {
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
-    private final AppOpenApiProperties.App properties;
+    private final AppApiProperties.App properties;
     private final String appKey;
 
     private final Object tokenLock = new Object();
     private volatile String appToken;
     private volatile long appTokenExpiresAtMs;
 
-    public AppOpenApiClient(ObjectMapper objectMapper, AppOpenApiProperties.App properties, String appKey) {
+    public AppApiClient(ObjectMapper objectMapper, AppApiProperties.App properties, String appKey) {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(15))
                 .build();

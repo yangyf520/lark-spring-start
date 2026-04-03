@@ -8,16 +8,16 @@ import com.lark.oapi.service.approval.v4.model.GetApprovalResp;
 import com.lark.oapi.service.approval.v4.model.GetInstanceReq;
 import com.lark.oapi.service.approval.v4.model.GetInstanceResp;
 import com.lark.oapi.service.approval.v4.model.InstanceCreate;
-import com.larksuite.lark.sdk.core.OapiClientRegistry;
+import com.larksuite.lark.sdk.core.ClientRegistry;
 import com.larksuite.lark.common.support.ApiExecutor;
 
 /** 审批 v4：定义、实例、创建；返回完整 SDK Resp。 */
 public class ApprovalService {
 
-    private final OapiClientRegistry registry;
+    private final ClientRegistry registry;
     private final ApiExecutor executor;
 
-    public ApprovalService(OapiClientRegistry registry, ApiExecutor executor) {
+    public ApprovalService(ClientRegistry registry, ApiExecutor executor) {
         this.registry = registry;
         this.executor = executor;
     }
@@ -27,7 +27,7 @@ public class ApprovalService {
         GetApprovalReq req = GetApprovalReq.newBuilder()
                 .approvalCode(approvalCode)
                 .build();
-        return executor.execute(() -> client.approval().v4().approval().get(req));
+        return executor.execute("approval.v4.approval.get", appKey, "approvalCode=" + approvalCode, () -> client.approval().v4().approval().get(req));
     }
 
     public GetInstanceResp getInstance(String appKey, String instanceId, String userId, String userIdType) throws Exception {
@@ -37,7 +37,7 @@ public class ApprovalService {
                 .userId(userId)
                 .userIdType(userIdType == null || userIdType.isBlank() ? "user_id" : userIdType)
                 .build();
-        return executor.execute(() -> client.approval().v4().instance().get(req));
+        return executor.execute("approval.v4.instance.get", appKey, "instanceId=" + instanceId, () -> client.approval().v4().instance().get(req));
     }
 
     public CreateInstanceResp createInstance(String appKey, InstanceCreate body) throws Exception {
@@ -45,7 +45,7 @@ public class ApprovalService {
         CreateInstanceReq req = CreateInstanceReq.newBuilder()
                 .instanceCreate(body)
                 .build();
-        return executor.execute(() -> client.approval().v4().instance().create(req));
+        return executor.execute("approval.v4.instance.create", appKey, "approvalCode=" + (body == null ? "" : body.getApprovalCode()), () -> client.approval().v4().instance().create(req));
     }
 
     private Client resolveClient(String appKey) {

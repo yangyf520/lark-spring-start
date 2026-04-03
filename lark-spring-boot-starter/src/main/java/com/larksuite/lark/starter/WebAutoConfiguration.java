@@ -1,6 +1,6 @@
 package com.larksuite.lark.starter;
 
-import com.larksuite.lark.sdk.core.OapiAutoConfiguration;
+import com.larksuite.lark.sdk.core.SdkAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,11 +10,11 @@ import org.springframework.context.annotation.ComponentScan;
  * 宿主无需额外配置 scanBasePackages。
  */
 @AutoConfiguration
-@AutoConfigureAfter({OapiAutoConfiguration.class, CommonAutoConfiguration.class})
+@AutoConfigureAfter({SdkAutoConfiguration.class, CoreAutoConfiguration.class})
 @ComponentScan(basePackages = {
         "com.larksuite.lark.sdk.controller",
         "com.larksuite.lark.app.controller",
         "com.larksuite.lark.core.advice"
 })
-public class LarkRestWebAutoConfiguration {
+public class WebAutoConfiguration {
 }

@@ -26,7 +26,8 @@ import com.lark.oapi.service.contact.v3.model.UpdateDepartmentResp;
 import com.lark.oapi.service.contact.v3.model.UpdateUserReq;
 import com.lark.oapi.service.contact.v3.model.UpdateUserResp;
 import com.lark.oapi.service.contact.v3.model.User;
-import com.larksuite.lark.sdk.core.OapiClientRegistry;
+import com.larksuite.lark.common.support.ApiExecutor;
+import com.larksuite.lark.sdk.core.ClientRegistry;
 
 /**
  * 通讯录 contact v3：用户、部门、批量换 ID。
@@ -36,10 +37,12 @@ import com.larksuite.lark.sdk.core.OapiClientRegistry;
  */
 public class ContactService {
 
-    private final OapiClientRegistry clientRegistry;
+    private final ClientRegistry clientRegistry;
+    private final ApiExecutor executor;
 
-    public ContactService(OapiClientRegistry clientRegistry) {
+    public ContactService(ClientRegistry clientRegistry, ApiExecutor executor) {
         this.clientRegistry = clientRegistry;
+        this.executor = executor;
     }
 
     public GetUserResp getUser(String appKey, String userId, String userIdType, String departmentIdType) throws Exception {
@@ -49,7 +52,7 @@ public class ContactService {
                 .userIdType(userIdType == null || userIdType.isBlank() ? "open_id" : userIdType)
                 .departmentIdType(departmentIdType == null || departmentIdType.isBlank() ? "open_department_id" : departmentIdType)
                 .build();
-        return client.contact().v3().user().get(req);
+        return executor.execute("contact.v3.user.get", appKey, "userId=" + userId, () -> client.contact().v3().user().get(req));
     }
 
     public ListDepartmentResp listDepartments(
@@ -70,7 +73,8 @@ public class ContactService {
                 .userIdType(userIdType == null || userIdType.isBlank() ? "open_id" : userIdType)
                 .departmentIdType(departmentIdType == null || departmentIdType.isBlank() ? "open_department_id" : departmentIdType)
                 .build();
-        return client.contact().v3().department().list(req);
+        return executor.execute("contact.v3.department.list", appKey, "parentDepartmentId=" + (parentDepartmentId == null ? "" : parentDepartmentId),
+                () -> client.contact().v3().department().list(req));
     }
 
     public BatchGetIdUserResp batchGetId(String appKey, String userIdType, String[] emails, String[] mobiles, Boolean includeResigned) throws Exception {
@@ -83,7 +87,8 @@ public class ContactService {
                         .includeResigned(includeResigned != null && includeResigned)
                         .build())
                 .build();
-        return client.contact().v3().user().batchGetId(req);
+        return executor.execute("contact.v3.user.batchGetId", appKey, "userIdType=" + (userIdType == null ? "" : userIdType),
+                () -> client.contact().v3().user().batchGetId(req));
     }
 
     public ListUserResp listUsers(
@@ -102,7 +107,8 @@ public class ContactService {
                 .userIdType(userIdType == null || userIdType.isBlank() ? "open_id" : userIdType)
                 .departmentIdType(departmentIdType == null || departmentIdType.isBlank() ? "open_department_id" : departmentIdType)
                 .build();
-        return client.contact().v3().user().list(req);
+        return executor.execute("contact.v3.user.list", appKey, "departmentId=" + (departmentId == null ? "" : departmentId),
+                () -> client.contact().v3().user().list(req));
     }
 
     public CreateUserResp createUser(
@@ -119,7 +125,8 @@ public class ContactService {
                 .clientToken(clientToken)
                 .user(user)
                 .build();
-        return client.contact().v3().user().create(req);
+        return executor.execute("contact.v3.user.create", appKey, "clientToken=" + (clientToken == null ? "" : clientToken),
+                () -> client.contact().v3().user().create(req));
     }
 
     public UpdateUserResp updateUser(
@@ -136,7 +143,8 @@ public class ContactService {
                 .departmentIdType(departmentIdType == null || departmentIdType.isBlank() ? "open_department_id" : departmentIdType)
                 .user(user)
                 .build();
-        return client.contact().v3().user().update(req);
+        return executor.execute("contact.v3.user.update", appKey, "userId=" + userId,
+                () -> client.contact().v3().user().update(req));
     }
 
     public DeleteUserResp deleteUser(String appKey, String userId, String userIdType) throws Exception {
@@ -145,7 +153,8 @@ public class ContactService {
                 .userId(userId)
                 .userIdType(userIdType == null || userIdType.isBlank() ? "open_id" : userIdType)
                 .build();
-        return client.contact().v3().user().delete(req);
+        return executor.execute("contact.v3.user.delete", appKey, "userId=" + userId,
+                () -> client.contact().v3().user().delete(req));
     }
 
     public GetDepartmentResp getDepartment(
@@ -160,7 +169,8 @@ public class ContactService {
                 .userIdType(userIdType == null || userIdType.isBlank() ? "open_id" : userIdType)
                 .departmentIdType(departmentIdType == null || departmentIdType.isBlank() ? "open_department_id" : departmentIdType)
                 .build();
-        return client.contact().v3().department().get(req);
+        return executor.execute("contact.v3.department.get", appKey, "departmentId=" + departmentId,
+                () -> client.contact().v3().department().get(req));
     }
 
     public CreateDepartmentResp createDepartment(
@@ -177,7 +187,8 @@ public class ContactService {
                 .clientToken(clientToken)
                 .department(department)
                 .build();
-        return client.contact().v3().department().create(req);
+        return executor.execute("contact.v3.department.create", appKey, "clientToken=" + (clientToken == null ? "" : clientToken),
+                () -> client.contact().v3().department().create(req));
     }
 
     public UpdateDepartmentResp updateDepartment(
@@ -194,7 +205,8 @@ public class ContactService {
                 .departmentIdType(departmentIdType == null || departmentIdType.isBlank() ? "open_department_id" : departmentIdType)
                 .department(department)
                 .build();
-        return client.contact().v3().department().update(req);
+        return executor.execute("contact.v3.department.update", appKey, "departmentId=" + departmentId,
+                () -> client.contact().v3().department().update(req));
     }
 
     public DeleteDepartmentResp deleteDepartment(String appKey, String departmentId, String departmentIdType) throws Exception {
@@ -203,7 +215,8 @@ public class ContactService {
                 .departmentId(departmentId)
                 .departmentIdType(departmentIdType == null || departmentIdType.isBlank() ? "open_department_id" : departmentIdType)
                 .build();
-        return client.contact().v3().department().delete(req);
+        return executor.execute("contact.v3.department.delete", appKey, "departmentId=" + departmentId,
+                () -> client.contact().v3().department().delete(req));
     }
 
     private Client resolveClient(String appKey) {

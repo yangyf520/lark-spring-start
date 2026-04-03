@@ -12,8 +12,9 @@ import com.lark.oapi.service.authen.v1.model.CreateAccessTokenResp;
 import com.lark.oapi.service.authen.v1.model.CreateRefreshAccessTokenReq;
 import com.lark.oapi.service.authen.v1.model.CreateRefreshAccessTokenReqBody;
 import com.lark.oapi.service.authen.v1.model.CreateRefreshAccessTokenResp;
-import com.larksuite.lark.sdk.core.OapiClientRegistry;
-import com.larksuite.lark.sdk.core.OapiProperties;
+import com.larksuite.lark.common.support.ApiExecutor;
+import com.larksuite.lark.sdk.core.ClientRegistry;
+import com.larksuite.lark.sdk.core.SdkProperties;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -21,18 +22,20 @@ import java.util.Base64;
 /** auth / authen：租户 token、用户 OAuth 换票；返回完整 SDK Resp（HTTP 由 Advice 解包）。 */
 public class AuthService {
 
-    private final OapiClientRegistry clientRegistry;
-    private final OapiProperties oapiProperties;
+    private final ClientRegistry clientRegistry;
+    private final SdkProperties sdkProperties;
     private final ObjectMapper objectMapper;
+    private final ApiExecutor executor;
 
-    public AuthService(OapiClientRegistry clientRegistry, OapiProperties oapiProperties, ObjectMapper objectMapper) {
+    public AuthService(ClientRegistry clientRegistry, SdkProperties sdkProperties, ObjectMapper objectMapper, ApiExecutor executor) {
         this.clientRegistry = clientRegistry;
-        this.oapiProperties = oapiProperties;
+        this.sdkProperties = sdkProperties;
         this.objectMapper = objectMapper;
+        this.executor = executor;
     }
 
     public InternalTenantAccessTokenResp tenantAccessTokenInternal(String appKey) throws Exception {
-        OapiProperties.App app = resolveAppConfig(appKey);
+        SdkProperties.App app = resolveAppConfig(appKey);
         Client client = resolveClient(appKey);
         InternalTenantAccessTokenReq req = InternalTenantAccessTokenReq.newBuilder()
                 .internalTenantAccessTokenReqBody(InternalTenantAccessTokenReqBody.newBuilder()
@@ -40,7 +43,8 @@ public class AuthService {
                         .appSecret(app.getAppSecret())
                         .build())
                 .build();
-        return client.auth().v3().tenantAccessToken().internal(req);
+        return executor.execute("auth.v3.tenantAccessToken.internal", appKey, "",
+                () -> client.auth().v3().tenantAccessToken().internal(req));
     }
 
     /**
@@ -67,7 +71,9 @@ public class AuthService {
                         .code(code)
                         .build())
                 .build();
-        return client.authen().v1().accessToken().create(req);
+        return executor.execute("authen.v1.accessToken.create", appKey,
+                "grantType=" + (grantType == null || grantType.isBlank() ? "authorization_code" : grantType),
+                () -> client.authen().v1().accessToken().create(req));
     }
 
     public CreateRefreshAccessTokenResp refreshUserAccessToken(String appKey, String refreshToken, String grantType) throws Exception {
@@ -78,7 +84,9 @@ public class AuthService {
                         .refreshToken(refreshToken)
                         .build())
                 .build();
-        return client.authen().v1().refreshAccessToken().create(req);
+        return executor.execute("authen.v1.refreshAccessToken.create", appKey,
+                "grantType=" + (grantType == null || grantType.isBlank() ? "refresh_token" : grantType),
+                () -> client.authen().v1().refreshAccessToken().create(req));
     }
 
     private static String extractRawBody(InternalTenantAccessTokenResp resp) {
@@ -115,19 +123,19 @@ public class AuthService {
         return clientRegistry.get(appKey);
     }
 
-    private OapiProperties.App resolveAppConfig(String appKey) {
+    private SdkProperties.App resolveAppConfig(String appKey) {
         if (appKey == null || appKey.isBlank()) {
             String primary = clientRegistry.primaryKey();
             if (primary == null || primary.isBlank()) {
-                throw new IllegalStateException("No primary app configured (set lark.oapi.primary)");
+                throw new IllegalStateException("No primary app: configure a single lark.oapi.apps entry or pass appKey");
             }
-            OapiProperties.App app = oapiProperties.getApps().get(primary);
+            SdkProperties.App app = sdkProperties.getApps().get(primary);
             if (app == null) {
                 throw new IllegalStateException("Primary app config not found: " + primary);
             }
             return app;
         }
-        OapiProperties.App app = oapiProperties.getApps().get(appKey);
+        SdkProperties.App app = sdkProperties.getApps().get(appKey);
         if (app == null) {
             throw new IllegalArgumentException("Unknown lark.oapi app key: " + appKey);
         }
