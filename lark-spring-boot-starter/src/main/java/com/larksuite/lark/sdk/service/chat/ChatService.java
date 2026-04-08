@@ -2,13 +2,23 @@ package com.larksuite.lark.sdk.service.chat;
 
 import com.lark.oapi.Client;
 import com.lark.oapi.service.im.v1.enums.CreateChatUserIdTypeEnum;
+import com.lark.oapi.service.im.v1.model.CreateChatMembersReq;
+import com.lark.oapi.service.im.v1.model.CreateChatMembersResp;
 import com.lark.oapi.service.im.v1.model.CreateChatReq;
 import com.lark.oapi.service.im.v1.model.CreateChatReqBody;
 import com.lark.oapi.service.im.v1.model.CreateChatResp;
+import com.lark.oapi.service.im.v1.model.DeleteChatMembersReq;
+import com.lark.oapi.service.im.v1.model.DeleteChatMembersResp;
+import com.lark.oapi.service.im.v1.model.GetChatMembersReq;
+import com.lark.oapi.service.im.v1.model.GetChatMembersResp;
 import com.lark.oapi.service.im.v1.model.GetChatReq;
 import com.lark.oapi.service.im.v1.model.GetChatResp;
+import com.lark.oapi.service.im.v1.model.IsInChatChatMembersReq;
+import com.lark.oapi.service.im.v1.model.IsInChatChatMembersResp;
 import com.larksuite.lark.sdk.core.ClientRegistry;
 import com.larksuite.lark.common.support.ApiExecutor;
+
+import java.util.Objects;
 
 /** IM 群：查询与创建会话；返回完整 SDK Resp。 */
 public class ChatService {
@@ -41,6 +51,55 @@ public class ChatService {
                 .createChatReqBody(body)
                 .build();
         return executor.execute("im.chat.create", appKey, "userIdType=" + (userIdType == null ? "" : userIdType), () -> client.im().chat().create(req));
+    }
+
+    public GetChatMembersResp getChatMembers(
+            String appKey,
+            String chatId,
+            String memberIdType,
+            Integer pageSize,
+            String pageToken
+    ) throws Exception {
+        if (chatId == null || chatId.isBlank()) {
+            throw new IllegalArgumentException("chatId is blank");
+        }
+        Client client = resolveClient(appKey);
+        GetChatMembersReq.Builder b = GetChatMembersReq.newBuilder().chatId(chatId);
+        if (memberIdType != null && !memberIdType.isBlank()) {
+            b.memberIdType(memberIdType);
+        }
+        if (pageSize != null) {
+            b.pageSize(pageSize);
+        }
+        if (pageToken != null && !pageToken.isBlank()) {
+            b.pageToken(pageToken);
+        }
+        GetChatMembersReq req = b.build();
+        return executor.execute("im.chatMembers.get", appKey, "chatId=" + chatId, () -> client.im().chatMembers().get(req));
+    }
+
+    public CreateChatMembersResp createChatMembers(String appKey, CreateChatMembersReq req) throws Exception {
+        Objects.requireNonNull(req, "req");
+        Client client = resolveClient(appKey);
+        return executor.execute("im.chatMembers.create", appKey, "chatId=" + req.getChatId(),
+                () -> client.im().chatMembers().create(req));
+    }
+
+    public DeleteChatMembersResp deleteChatMembers(String appKey, DeleteChatMembersReq req) throws Exception {
+        Objects.requireNonNull(req, "req");
+        Client client = resolveClient(appKey);
+        return executor.execute("im.chatMembers.delete", appKey, "chatId=" + req.getChatId(),
+                () -> client.im().chatMembers().delete(req));
+    }
+
+    public IsInChatChatMembersResp isUserInChat(String appKey, String chatId) throws Exception {
+        if (chatId == null || chatId.isBlank()) {
+            throw new IllegalArgumentException("chatId is blank");
+        }
+        Client client = resolveClient(appKey);
+        IsInChatChatMembersReq req = IsInChatChatMembersReq.newBuilder().chatId(chatId).build();
+        return executor.execute("im.chatMembers.isInChat", appKey, "chatId=" + chatId,
+                () -> client.im().chatMembers().isInChat(req));
     }
 
     static CreateChatUserIdTypeEnum resolveCreateChatUserIdType(String userIdType) {

@@ -1,9 +1,23 @@
 package com.larksuite.lark.sdk.controller;
 
+import com.lark.oapi.service.approval.v4.model.AddSignInstanceResp;
+import com.lark.oapi.service.approval.v4.model.ApproveTaskResp;
+import com.lark.oapi.service.approval.v4.model.CancelInstanceResp;
+import com.lark.oapi.service.approval.v4.model.CcInstanceResp;
 import com.lark.oapi.service.approval.v4.model.CreateInstanceResp;
 import com.lark.oapi.service.approval.v4.model.GetApprovalResp;
 import com.lark.oapi.service.approval.v4.model.GetInstanceResp;
 import com.lark.oapi.service.approval.v4.model.InstanceCreate;
+import com.lark.oapi.service.approval.v4.model.ListInstanceResp;
+import com.lark.oapi.service.approval.v4.model.PreviewInstanceResp;
+import com.lark.oapi.service.approval.v4.model.QueryInstanceResp;
+import com.lark.oapi.service.approval.v4.model.QueryTaskResp;
+import com.lark.oapi.service.approval.v4.model.RejectTaskResp;
+import com.lark.oapi.service.approval.v4.model.ResubmitTaskResp;
+import com.lark.oapi.service.approval.v4.model.SearchCcInstanceResp;
+import com.lark.oapi.service.approval.v4.model.SearchTaskResp;
+import com.lark.oapi.service.approval.v4.model.SpecifiedRollbackInstanceResp;
+import com.lark.oapi.service.approval.v4.model.TransferTaskResp;
 import com.larksuite.lark.common.annotation.LarkApi;
 import com.larksuite.lark.sdk.service.approval.ApprovalService;
 import jakarta.validation.Valid;
@@ -94,5 +108,128 @@ public class ApprovalController {
             throw new IllegalArgumentException("body is required");
         }
         return approvalService.createInstance(req.appKey(), req.body());
+    }
+
+    /**
+     * 按条件分页查询审批实例（query 与飞书 {@code ListInstanceReq} 一致）。
+     */
+    @GetMapping("/instances/list")
+    public ListInstanceResp listInstances(
+            @RequestParam(required = false) String appKey,
+            @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false) String pageToken,
+            @RequestParam(required = false) String approvalCode,
+            @RequestParam(required = false) String startTime,
+            @RequestParam(required = false) String endTime
+    ) throws Exception {
+        return approvalService.listInstances(appKey, pageSize, pageToken, approvalCode, startTime, endTime);
+    }
+
+    /**
+     * 撤销「审批中」实例。请求体 JSON 与飞书 SDK {@code CancelInstanceReq} 一致（含 {@code user_id_type} 与 {@code body}）。
+     */
+    @PostMapping(path = "/instances/cancel", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CancelInstanceResp cancelInstance(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.cancelInstance(appKey, jsonBody);
+    }
+
+    @PostMapping(path = "/instances/add-sign", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public AddSignInstanceResp addSignInstance(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.addSignInstance(appKey, jsonBody);
+    }
+
+    @PostMapping(path = "/instances/query", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public QueryInstanceResp queryInstance(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.queryInstance(appKey, jsonBody);
+    }
+
+    @PostMapping(path = "/instances/preview", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public PreviewInstanceResp previewInstance(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.previewInstance(appKey, jsonBody);
+    }
+
+    @PostMapping(path = "/instances/cc", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CcInstanceResp ccInstance(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.ccInstance(appKey, jsonBody);
+    }
+
+    @PostMapping(path = "/instances/search-cc", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public SearchCcInstanceResp searchCcInstance(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.searchCcInstance(appKey, jsonBody);
+    }
+
+    @PostMapping(path = "/instances/specified-rollback", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public SpecifiedRollbackInstanceResp specifiedRollbackInstance(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.specifiedRollbackInstance(appKey, jsonBody);
+    }
+
+    /** 同意审批任务。请求体 JSON 与飞书 SDK {@code ApproveTaskReq} 一致。 */
+    @PostMapping(path = "/tasks/approve", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ApproveTaskResp approveTask(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.approveTask(appKey, jsonBody);
+    }
+
+    @PostMapping(path = "/tasks/reject", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public RejectTaskResp rejectTask(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.rejectTask(appKey, jsonBody);
+    }
+
+    @PostMapping(path = "/tasks/transfer", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public TransferTaskResp transferTask(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.transferTask(appKey, jsonBody);
+    }
+
+    @PostMapping(path = "/tasks/query", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public QueryTaskResp queryTask(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.queryTask(appKey, jsonBody);
+    }
+
+    @PostMapping(path = "/tasks/search", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public SearchTaskResp searchTask(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.searchTask(appKey, jsonBody);
+    }
+
+    @PostMapping(path = "/tasks/resubmit", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResubmitTaskResp resubmitTask(
+            @RequestParam(required = false) String appKey,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        return approvalService.resubmitTask(appKey, jsonBody);
     }
 }

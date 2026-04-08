@@ -7,6 +7,14 @@ import com.lark.oapi.service.im.v1.enums.ReceiveIdTypeEnum;
 import com.lark.oapi.service.im.v1.model.CreateMessageReq;
 import com.lark.oapi.service.im.v1.model.CreateMessageReqBody;
 import com.lark.oapi.service.im.v1.model.CreateMessageResp;
+import com.lark.oapi.service.im.v1.model.DeleteMessageReq;
+import com.lark.oapi.service.im.v1.model.DeleteMessageResp;
+import com.lark.oapi.service.im.v1.model.GetMessageReq;
+import com.lark.oapi.service.im.v1.model.GetMessageResp;
+import com.lark.oapi.service.im.v1.model.ListMessageReq;
+import com.lark.oapi.service.im.v1.model.ListMessageResp;
+import com.lark.oapi.service.im.v1.model.ReplyMessageReq;
+import com.lark.oapi.service.im.v1.model.ReplyMessageResp;
 import com.lark.oapi.service.im.v1.model.UpdateMessageReq;
 import com.lark.oapi.service.im.v1.model.UpdateMessageReqBody;
 import com.lark.oapi.service.im.v1.model.UpdateMessageResp;
@@ -132,5 +140,75 @@ public class ImMessageService {
                 .build();
         return executor.execute("im.v1.message.update", appKey, "messageId=" + messageId,
                 () -> client.im().message().update(req));
+    }
+
+    public GetMessageResp getMessage(String appKey, String messageId, String userIdType) throws Exception {
+        if (messageId == null || messageId.isBlank()) {
+            throw new IllegalArgumentException("messageId is blank");
+        }
+        Client client = (appKey == null || appKey.isBlank()) ? registry.primary() : registry.get(appKey);
+        GetMessageReq.Builder b = GetMessageReq.newBuilder().messageId(messageId);
+        if (userIdType != null && !userIdType.isBlank()) {
+            b.userIdType(userIdType);
+        }
+        GetMessageReq req = b.build();
+        return executor.execute("im.v1.message.get", appKey, "messageId=" + messageId,
+                () -> client.im().message().get(req));
+    }
+
+    public ListMessageResp listMessages(
+            String appKey,
+            String containerIdType,
+            String containerId,
+            String startTime,
+            String endTime,
+            String sortType,
+            Integer pageSize,
+            String pageToken
+    ) throws Exception {
+        if (containerId == null || containerId.isBlank()) {
+            throw new IllegalArgumentException("containerId is blank");
+        }
+        String cType = (containerIdType == null || containerIdType.isBlank()) ? "chat" : containerIdType;
+        Client client = (appKey == null || appKey.isBlank()) ? registry.primary() : registry.get(appKey);
+        ListMessageReq.Builder b = ListMessageReq.newBuilder()
+                .containerIdType(cType)
+                .containerId(containerId);
+        if (startTime != null && !startTime.isBlank()) {
+            b.startTime(startTime);
+        }
+        if (endTime != null && !endTime.isBlank()) {
+            b.endTime(endTime);
+        }
+        if (sortType != null && !sortType.isBlank()) {
+            b.sortType(sortType);
+        }
+        if (pageSize != null) {
+            b.pageSize(pageSize);
+        }
+        if (pageToken != null && !pageToken.isBlank()) {
+            b.pageToken(pageToken);
+        }
+        ListMessageReq req = b.build();
+        return executor.execute("im.v1.message.list", appKey, "containerId=" + containerId,
+                () -> client.im().message().list(req));
+    }
+
+    /** 撤回机器人或群主可撤回的会话内消息（与开放平台「删除消息」一致）。 */
+    public DeleteMessageResp deleteMessage(String appKey, String messageId) throws Exception {
+        if (messageId == null || messageId.isBlank()) {
+            throw new IllegalArgumentException("messageId is blank");
+        }
+        Client client = (appKey == null || appKey.isBlank()) ? registry.primary() : registry.get(appKey);
+        DeleteMessageReq req = DeleteMessageReq.newBuilder().messageId(messageId).build();
+        return executor.execute("im.v1.message.delete", appKey, "messageId=" + messageId,
+                () -> client.im().message().delete(req));
+    }
+
+    public ReplyMessageResp replyMessage(String appKey, ReplyMessageReq req) throws Exception {
+        Objects.requireNonNull(req, "req");
+        Client client = (appKey == null || appKey.isBlank()) ? registry.primary() : registry.get(appKey);
+        return executor.execute("im.v1.message.reply", appKey, "messageId=" + req.getMessageId(),
+                () -> client.im().message().reply(req));
     }
 }

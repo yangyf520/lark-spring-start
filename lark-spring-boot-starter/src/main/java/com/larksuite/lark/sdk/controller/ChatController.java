@@ -1,9 +1,18 @@
 package com.larksuite.lark.sdk.controller;
 
+import com.lark.oapi.service.im.v1.model.CreateChatMembersReq;
+import com.lark.oapi.service.im.v1.model.CreateChatMembersReqBody;
+import com.lark.oapi.service.im.v1.model.CreateChatMembersResp;
 import com.lark.oapi.service.im.v1.model.CreateChatReqBody;
 import com.lark.oapi.service.im.v1.model.CreateChatResp;
+import com.lark.oapi.service.im.v1.model.DeleteChatMembersReq;
+import com.lark.oapi.service.im.v1.model.DeleteChatMembersReqBody;
+import com.lark.oapi.service.im.v1.model.DeleteChatMembersResp;
+import com.lark.oapi.service.im.v1.model.GetChatMembersResp;
 import com.lark.oapi.service.im.v1.model.GetChatResp;
+import com.lark.oapi.service.im.v1.model.IsInChatChatMembersResp;
 import com.larksuite.lark.common.annotation.LarkApi;
+import com.larksuite.lark.common.support.SdkModelJson;
 import com.larksuite.lark.sdk.service.chat.ChatService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
@@ -100,5 +109,71 @@ public class ChatController {
             throw new IllegalArgumentException("body is required");
         }
         return chatService.createChat(req.appKey(), req.resolvedSdkBody(), req.effectiveUserIdType());
+    }
+
+    /**
+     * 分页获取群成员列表。
+     */
+    @GetMapping("/{chatId}/members")
+    public GetChatMembersResp listMembers(
+            @PathVariable String chatId,
+            @RequestParam(required = false) String appKey,
+            @RequestParam(required = false, defaultValue = "open_id") String memberIdType,
+            @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false) String pageToken
+    ) throws Exception {
+        return chatService.getChatMembers(appKey, chatId, memberIdType, pageSize, pageToken);
+    }
+
+    /**
+     * 拉人入群。请求体为 {@link CreateChatMembersReqBody} 的 JSON（如 {@code {"id_list":["ou_xxx"]}}）。
+     */
+    @PostMapping(path = "/{chatId}/members", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CreateChatMembersResp addMembers(
+            @PathVariable String chatId,
+            @RequestParam(required = false) String appKey,
+            @RequestParam(required = false, defaultValue = "open_id") String memberIdType,
+            @RequestParam(required = false) Integer succeedType,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        CreateChatMembersReqBody body = SdkModelJson.fromJson(jsonBody, CreateChatMembersReqBody.class);
+        CreateChatMembersReq.Builder b = CreateChatMembersReq.newBuilder()
+                .chatId(chatId)
+                .memberIdType(memberIdType)
+                .createChatMembersReqBody(body);
+        if (succeedType != null) {
+            b.succeedType(succeedType);
+        }
+        return chatService.createChatMembers(appKey, b.build());
+    }
+
+    /**
+     * 移出群成员。请求体为 {@link DeleteChatMembersReqBody} 的 JSON。
+     */
+    @PostMapping(path = "/{chatId}/members/remove", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public DeleteChatMembersResp removeMembers(
+            @PathVariable String chatId,
+            @RequestParam(required = false) String appKey,
+            @RequestParam(required = false, defaultValue = "open_id") String memberIdType,
+            @RequestBody String jsonBody
+    ) throws Exception {
+        DeleteChatMembersReqBody body = SdkModelJson.fromJson(jsonBody, DeleteChatMembersReqBody.class);
+        DeleteChatMembersReq req = DeleteChatMembersReq.newBuilder()
+                .chatId(chatId)
+                .memberIdType(memberIdType)
+                .deleteChatMembersReqBody(body)
+                .build();
+        return chatService.deleteChatMembers(appKey, req);
+    }
+
+    /**
+     * 判断当前 access_token 对应用户/机器人是否在群内。
+     */
+    @GetMapping("/{chatId}/members/is-in-chat")
+    public IsInChatChatMembersResp isInChat(
+            @PathVariable String chatId,
+            @RequestParam(required = false) String appKey
+    ) throws Exception {
+        return chatService.isUserInChat(appKey, chatId);
     }
 }
